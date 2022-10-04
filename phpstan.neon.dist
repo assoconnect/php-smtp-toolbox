@@ -1,0 +1,8 @@
+parameters:
+    paths:
+        - src/
+        - tests/
+
+includes:
+    - vendor/assoconnect/phpstan-rules/extension.neon
+    - vendor/assoconnect/phpstan-rules/rules.neon
