@@ -6,3 +6,4 @@ parameters:
 includes:
     - vendor/assoconnect/phpstan-rules/extension.neon
     - vendor/assoconnect/phpstan-rules/rules.neon
+    - phpstan-baseline.neon
