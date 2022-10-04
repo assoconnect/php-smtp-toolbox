@@ -1,24 +1,24 @@
 {
-    "name": "assoconnect/your-repo",
+    "name": "assoconnect/php-smtp-toolbox",
     "repositories": [
         {
             "type": "git",
-            "url": "https://github.com/assoconnect/your-repo/"
+            "url": "https://github.com/assoconnect/php-smtp-toolbox/"
         }
     ],
     "type": "library",
     "description": "",
     "keywords": ["php"],
-    "homepage": "https://github.com/assoconnect/your-repo/",
+    "homepage": "https://github.com/assoconnect/php-smtp-toolbox",
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "AssoConnect\\YourRepo\\": "src/"
+            "AssoConnect\\SmtpToolbox\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "AssoConnect\\YourRepo\\Tests\\": "tests/"
+            "AssoConnect\\SmtpToolbox\\Tests\\": "tests/"
         }
     },
     "require-dev": {
