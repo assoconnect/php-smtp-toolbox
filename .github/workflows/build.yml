@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         php-versions: ['7.4', '8.0', '8.1']
     runs-on: ubuntu-latest
@@ -31,7 +32,7 @@ jobs:
       - run: vendor/bin/phpstan
         if: ${{ failure() ||  success() }}
 
-      - run: XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-clover ./clover.xml --log-junit ./phpunit.report.xml
+      - run: XDEBUG_MODE=coverage vendor/bin/simple-phpunit --coverage-clover ./clover.xml --log-junit ./phpunit.report.xml
         if: ${{ failure() ||  success() }}
       
       # https://community.sonarsource.com/t/code-coverage-doesnt-work-with-github-action/16747
@@ -45,8 +46,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectName=[your-repo]
-            -Dsonar.projectKey=assoconnect_[your-repo]
+            -Dsonar.projectName=php-smtp-toolbox
+            -Dsonar.projectKey=assoconnect_php-smtp-toolbox
             -Dsonar.organization=assoconnect
             -Dsonar.sources=src
             -Dsonar.tests=tests

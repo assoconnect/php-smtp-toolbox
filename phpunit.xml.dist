@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./vendor/autoload.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <php>
+    <server name="SYMFONY_PHPUNIT_VERSION" value="9"/>
+  </php>
   <coverage processUncoveredFiles="true">
     <include>
       <directory suffix=".php">./src</directory>
@@ -10,4 +13,15 @@
       <directory>./tests/</directory>
     </testsuite>
   </testsuites>
+  <listeners>
+    <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener">
+      <arguments>
+        <array>
+          <element key="dns-sensitive">
+            <string>AssoConnect\SmtpToolbox\Resolver</string>
+          </element>
+        </array>
+      </arguments>
+    </listener>
+  </listeners>
 </phpunit>
