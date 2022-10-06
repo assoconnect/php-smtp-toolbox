@@ -21,6 +21,8 @@ class ProviderCheckerTest extends TestCase
             new SmtpConnection(new NullLogger())
         );
         self::assertSame($isValid, $checker->check($email));
+        // Second call to check if connections are correctly closed
+        self::assertSame($isValid, $checker->check($email));
     }
 
     /**

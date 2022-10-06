@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\ProviderChecker;
 
+use AssoConnect\SmtpToolbox\Exception\SmtpConnectionRuntimeException;
+
 /**
  * @link https://assistance.sfr.fr/sfrmail-appli/sfrmail/configurer-messagerie-recevoir-email-sfr.html
  */
@@ -33,22 +35,19 @@ class SfrProviderChecker extends AbstractProviderChecker
 
     public function check(string $email): bool
     {
-        if (!$this->connection->connect('smtp.sfr.fr', 587)) {
-            $this->unsupported();
-        }
+        $this->connection->connect('smtp.sfr.fr', 587);
+        $this->connection->hello('sfr.fr');
 
-        if (true !== $this->connection->hello('sfr.fr')) {
-            $this->unsupported();
-        }
-
-        if ($this->connection->mail($email)) {
+        try {
+            $this->connection->mail($email);
+            $this->connection->close();
             return true;
+        } catch (SmtpConnectionRuntimeException $exception) {
+            if (false !== strpos($exception->getMessage(), 'Sender user unknown')) {
+                $this->connection->close();
+                return false;
+            }
+            throw $exception;
         }
-
-        if (false !== strpos($this->connection->getLastReply(), 'Sender user unknown')) {
-            return false;
-        }
-
-        $this->unsupported();
     }
 }

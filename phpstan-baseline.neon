@@ -6,22 +6,7 @@ parameters:
 			path: src/Connection/SmtpConnection.php
 
 		-
-			message: "#^Method AssoConnect\\\\SmtpToolbox\\\\Connection\\\\SmtpConnection\\:\\:getLastError\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Connection/SmtpConnection.php
-
-		-
 			message: "#^Method AssoConnect\\\\SmtpToolbox\\\\Connection\\\\SmtpConnection\\:\\:getServerCapabilities\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Connection/SmtpConnection.php
-
-		-
-			message: "#^Method AssoConnect\\\\SmtpToolbox\\\\Connection\\\\SmtpConnection\\:\\:sendCommand\\(\\) has parameter \\$expect with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Connection/SmtpConnection.php
-
-		-
-			message: "#^Offset 'EHLO' does not exist on array\\|null\\.$#"
 			count: 1
 			path: src/Connection/SmtpConnection.php
 
@@ -83,11 +68,6 @@ parameters:
 		-
 			message: "#^Parameter \\#2 \\$search of function array_key_exists expects array, array\\|null given\\.$#"
 			count: 2
-			path: src/Connection/SmtpConnection.php
-
-		-
-			message: "#^Property AssoConnect\\\\SmtpToolbox\\\\Connection\\\\SmtpConnection\\:\\:\\$lastError type has no value type specified in iterable type array\\.$#"
-			count: 1
 			path: src/Connection/SmtpConnection.php
 
 		-
