@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\Connection;
 
+use AssoConnect\SmtpToolbox\Exception\SmtpConnectionLogicException;
+use AssoConnect\SmtpToolbox\Exception\SmtpConnectionRuntimeException;
 use Psr\Log\LoggerInterface;
 
 class SmtpConnection
@@ -80,15 +82,6 @@ class SmtpConnection
      * Default of 5 minutes (300sec) is from RFC2821 section 4.5.3.2.
      */
     private int $timeLimit = 10;
-    /**
-     * Error information, if any, for the last SMTP command.
-     */
-    private array $lastError = [
-        'error' => '',
-        'detail' => '',
-        'smtp_code' => '',
-        'smtp_code_ex' => '',
-    ];
 
     /**
      * The set of SMTP extensions sent in reply to EHLO command.
@@ -113,16 +106,13 @@ class SmtpConnection
      * @param int $timeout How long to wait for the connection to open
      * @param array $options An array of options for stream_context_create()
      */
-    public function connect(string $host, int $port = null, int $timeout = 30, array $options = []): bool
+    public function connect(string $host, int $port = null, int $timeout = 30, array $options = []): void
     {
         // make sure we are __not__ connected
         if ($this->connected()) {
-            $this->setLastError('Already connected to a server');
-
-            return false;
+            throw new SmtpConnectionRuntimeException('Already connected to a server');
         }
 
-        $this->setLastError();
         $this->transferLogs = [];
 
         if ($port === null) {
@@ -169,13 +159,7 @@ class SmtpConnection
 
         // Verify we connected properly
         if (!$this->checkConnection()) {
-            $this->setLastError('Failed to connect to server', '', (string)$errno, $errstr);
-            $this->log(
-                sprintf('SMTP ERROR: %s: %s (%d)', $this->lastError['error'], $errstr, $errno),
-                self::DEBUG_CLIENT
-            );
-
-            return false;
+            throw new SmtpConnectionRuntimeException(sprintf('Failed to connect to server: %s', $errstr), $errno);
         }
 
         $this->log('Connection: opened', self::DEBUG_CONNECTION);
@@ -203,8 +187,6 @@ class SmtpConnection
             'smtp_code' => (int)$code,
             'success' => (int)$code === 220,
         ];
-
-        return true;
     }
 
     /**
@@ -270,7 +252,6 @@ class SmtpConnection
      */
     public function close(): void
     {
-        $this->setLastError();
         $this->serverCapabilities = null;
         if ($this->checkConnection()) {
             // close the connection and cleanup
@@ -448,9 +429,9 @@ class SmtpConnection
      *
      * @param string $name The name to verify
      */
-    public function verify(string $name): bool
+    public function verify(string $name): void
     {
-        return $this->sendCommand('VRFY', "VRFY $name", [250, 251]);
+        $this->sendCommand('VRFY', "VRFY $name", [250, 251]);
     }
 
     /**
@@ -458,23 +439,17 @@ class SmtpConnection
      *
      * @param string $command The command name - not sent to the server
      * @param string $commandRaw The actual command to send
-     * @param int|array $expect One or more expected integer success codes
-     *
-     * @return bool True on success
+     * @param int|int[] $expect One or more expected integer success codes
      */
-    public function sendCommand(string $command, string $commandRaw, $expect): bool
+    public function sendCommand(string $command, string $commandRaw, $expect): void
     {
         if (!$this->connected()) {
-            $this->setLastError("Called $command without being connected");
-
-            return false;
+            throw new SmtpConnectionLogicException("Called $command without being connected");
         }
 
         //Reject line breaks in all commands
         if (strpos($commandRaw, "\n") !== false || strpos($commandRaw, "\r") !== false) {
-            $this->setLastError("Command '$command' contained line breaks");
-
-            return false;
+            throw new SmtpConnectionLogicException("Command '$command' contained line breaks");
         }
 
         $this->sendRaw($commandRaw . self::CRLF, $command);
@@ -495,18 +470,11 @@ class SmtpConnection
         $this->log('SERVER -> CLIENT: ' . $this->lastReply, self::DEBUG_SERVER);
 
         if (!$success) {
-            $this->setLastError("$command command failed", $detail, $code, $code_ex);
-            $this->log(
-                sprintf('SMTP ERROR: %s: %s', $this->lastError['error'], $this->lastReply),
-                self::DEBUG_CLIENT
+            throw new SmtpConnectionRuntimeException(
+                sprintf('%s command failed: %s', $command, $this->lastReply),
+                (int) $code
             );
-
-            return false;
         }
-
-        $this->setLastError();
-
-        return true;
     }
 
     /**
@@ -552,9 +520,9 @@ class SmtpConnection
      * Send an SMTP NOOP command.
      * Used to keep keep-alives alive, doesn't actually do anything.
      */
-    public function noop(): bool
+    public function noop(): void
     {
-        return $this->sendCommand('NOOP', 'NOOP', 250);
+        $this->sendCommand('NOOP', 'NOOP', 250);
     }
 
     /**
@@ -566,14 +534,15 @@ class SmtpConnection
      *
      * @param string $host The host name or IP to connect to
      */
-    public function hello(string $host = ''): bool
+    public function hello(string $host = ''): void
     {
         // try extended hello first (RFC 2821)
-        if ($this->sendHello('EHLO', $host)) {
-            return true;
+        try {
+            $this->sendHello('EHLO', $host);
+            return;
+        } catch (SmtpConnectionRuntimeException $exception) {
+            $this->sendHello('HELO', $host);
         }
-
-        return $this->sendHello('HELO', $host);
     }
 
     /**
@@ -586,16 +555,10 @@ class SmtpConnection
      *
      * @see hello()
      */
-    protected function sendHello(string $hello, string $host): bool
+    protected function sendHello(string $hello, string $host): void
     {
-        $result = $this->sendCommand($hello, $hello . ' ' . $host, 250);
-        if ($result) {
-            $this->parseHelloFields($hello, $this->lastReply);
-        } else {
-            $this->serverCapabilities = null;
-        }
-
-        return $result;
+        $this->sendCommand($hello, $hello . ' ' . $host, 250);
+        $this->parseHelloFields($hello, $this->lastReply);
     }
 
     /**
@@ -647,39 +610,9 @@ class SmtpConnection
      *
      * @param string $from Source address of this message
      */
-    public function mail(string $from): bool
+    public function mail(string $from): void
     {
-        return $this->sendCommand('MAIL FROM', sprintf('MAIL FROM:<%s>', $from), 250);
-    }
-
-    /**
-     * Get the latest error.
-     */
-    public function getLastError(): array
-    {
-        return $this->lastError;
-    }
-
-    /**
-     * Set error messages and codes.
-     *
-     * @param ?string $message The error message
-     * @param ?string $detail Further detail on the error
-     * @param ?string $smtp_code An associated SMTP error code
-     * @param ?string $smtp_code_ex Extended SMTP code
-     */
-    protected function setLastError(
-        string $message = null,
-        string $detail = null,
-        string $smtp_code = null,
-        string $smtp_code_ex = null
-    ): void {
-        $this->lastError = [
-            'error' => $message,
-            'detail' => $detail,
-            'smtp_code' => $smtp_code,
-            'smtp_code_ex' => $smtp_code_ex,
-        ];
+        $this->sendCommand('MAIL FROM', sprintf('MAIL FROM:<%s>', $from), 250);
     }
 
     /**
@@ -689,16 +622,12 @@ class SmtpConnection
      *
      * @param bool $closeConnection Should the connection close?
      */
-    public function quit(bool $closeConnection = true): bool
+    public function quit(bool $closeConnection = true): void
     {
-        $success = $this->sendCommand('QUIT', 'QUIT', 221);
-        $err = $this->lastError; // save any error
-        if ($success || $closeConnection) {
+        $this->sendCommand('QUIT', 'QUIT', 221);
+        if ($closeConnection) {
             $this->close();
-            $this->lastError = $err; // restore any error from the quit command
         }
-
-        return $success;
     }
 
     /**
@@ -709,25 +638,19 @@ class SmtpConnection
      *
      * @param string $address The address the message is being sent to
      */
-    public function recipient(string $address): bool
+    public function recipient(string $address): void
     {
-        return $this->sendCommand(
-            'RCPT TO',
-            'RCPT TO:<' . $address . '>',
-            [250, 251]
-        );
+        $this->sendCommand('RCPT TO', 'RCPT TO:<' . $address . '>', [250, 251]);
     }
 
     /**
      * Send an SMTP RSET command.
      * Abort any transaction that is currently in progress.
      * Implements RFC 821: RSET <CRLF>.
-     *
-     * @return bool True on success
      */
-    public function reset(): bool
+    public function reset(): void
     {
-        return $this->sendCommand('RSET', 'RSET', 250);
+        $this->sendCommand('RSET', 'RSET', 250);
     }
 
     /**
@@ -735,9 +658,7 @@ class SmtpConnection
      */
     public function startTLS(): bool
     {
-        if (!$this->sendCommand('STARTTLS', 'STARTTLS', 220)) {
-            return false;
-        }
+        $this->sendCommand('STARTTLS', 'STARTTLS', 220);
 
         //Allow the best TLS version(s) we can
         $crypto_method = STREAM_CRYPTO_METHOD_TLS_CLIENT;
@@ -789,23 +710,21 @@ class SmtpConnection
     public function getServerCapability(string $name)
     {
         if (count($this->serverCapabilities) === 0) {
-            $this->setLastError('No HELO/EHLO was sent');
-
-            return null;
+            throw new SmtpConnectionLogicException('No HELO/EHLO was sent');
         }
 
         if (!array_key_exists($name, $this->serverCapabilities)) {
             if ('HELO' === $name) {
-                return $this->serverCapabilities['EHLO'];
+                return $this->getServerCapability('EHLO');
             }
 
             if ('EHLO' === $name || array_key_exists('EHLO', $this->serverCapabilities)) {
                 return false;
             }
 
-            $this->setLastError('HELO handshake was used; No information about server extensions available');
-
-            return null;
+            throw new SmtpConnectionRuntimeException(
+                'HELO handshake was used; No information about server extensions available'
+            );
         }
 
         return $this->serverCapabilities[$name];
@@ -821,11 +740,6 @@ class SmtpConnection
      */
     protected function errorHandler(int $errno, string $errmsg, string $errfile = '', int $errline = 0): void
     {
-        $notice = 'Connection failed.';
-        $this->setLastError($notice, $errmsg, (string)$errno);
-        $this->log(
-            "$notice Error #$errno: $errmsg [$errfile line $errline]",
-            self::DEBUG_CONNECTION
-        );
+        throw new SmtpConnectionRuntimeException($errmsg, $errno);
     }
 }

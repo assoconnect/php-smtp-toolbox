@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\ProviderChecker;
 
+use AssoConnect\SmtpToolbox\Exception\SmtpConnectionRuntimeException;
+
 /**
  * @link https://docs.ovh.com/fr/emails/generalites-sur-les-emails-mutualises/
  */
@@ -24,26 +26,25 @@ class OvhProviderChecker extends AbstractProviderChecker
 
     public function check(string $email): bool
     {
-        if (!$this->connection->connect('ssl0.ovh.net', 587)) {
-            $this->unsupported();
-        }
+        $this->connection->connect('ssl0.ovh.net', 587);
+        $this->connection->hello('ovh.net');
 
-        if (!$this->connection->hello('ovh.net')) {
-            $this->unsupported();
-        }
         $this->connection->sendCommand('AUTH LOGIN', 'AUTH LOGIN', 334);
         $this->connection->sendCommand('USERNAME', base64_encode($email), 334);
-        $this->connection->sendCommand('PASSWORD', base64_encode('hello'), 335);
+        $this->connection->sendCommand('PASSWORD', base64_encode('hello'), 535);
         // OVH doesn't reply when the address is correct so a short timeout to prevent useless hanging
         $this->connection->setTimeout(3);
-        $this->connection->mail($email);
-        $lastReply = $this->connection->getLastReply();
-
-        // OVH only replies "Client was not authenticated" when the address is incorrect
-        if (false !== strpos($lastReply, 'Client was not authenticated')) {
-            return false;
+        try {
+            $this->connection->mail($email);
+        } catch (SmtpConnectionRuntimeException $exception) {
+            // OVH only replies "Client was not authenticated" when the address is incorrect
+            if (false !== strpos($exception->getMessage(), 'Client was not authenticated')) {
+                $this->connection->close();
+                return false;
+            }
         }
 
+        $this->connection->close();
         return true;
     }
 }
