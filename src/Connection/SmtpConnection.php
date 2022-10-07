@@ -110,7 +110,7 @@ class SmtpConnection
     {
         // make sure we are __not__ connected
         if ($this->connected()) {
-            throw new SmtpConnectionRuntimeException('Already connected to a server');
+            $this->quit();
         }
 
         $this->transferLogs = [];
@@ -619,15 +619,11 @@ class SmtpConnection
      * Send an SMTP QUIT command.
      * Closes the socket if there is no error or the $closeConnection argument is true.
      * Implements from RFC 821: QUIT <CRLF>.
-     *
-     * @param bool $closeConnection Should the connection close?
      */
-    public function quit(bool $closeConnection = true): void
+    public function quit(): void
     {
         $this->sendCommand('QUIT', 'QUIT', 221);
-        if ($closeConnection) {
-            $this->close();
-        }
+        $this->close();
     }
 
     /**
@@ -741,5 +737,12 @@ class SmtpConnection
     protected function errorHandler(int $errno, string $errmsg, string $errfile = '', int $errline = 0): void
     {
         throw new SmtpConnectionRuntimeException($errmsg, $errno);
+    }
+
+    public function __destruct()
+    {
+        if ($this->connected()) {
+            $this->close();
+        }
     }
 }
