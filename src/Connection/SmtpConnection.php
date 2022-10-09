@@ -46,7 +46,12 @@ class SmtpConnection
     private static ?bool $hasStreamApi = null;
 
     public LoggerInterface $debugOutput;
+
+    /**
+     * @var array{command: string, response: string, smtp_code: int, success: int|bool}[]
+     */
     public array $transferLogs = [];
+
     /**
      * The socket for the server connection.
      *
@@ -90,6 +95,7 @@ class SmtpConnection
      * represents the server name. In case of HELO it is the only element of the array.
      * Other values can be boolean TRUE or an array containing extension options.
      * If null, no HELO/EHLO string has yet been received.
+     * @var mixed[]
      */
     private ?array $serverCapabilities = null;
 
@@ -104,7 +110,7 @@ class SmtpConnection
      * @param string $host SMTP server IP or host name
      * @param ?int $port The port number to connect to
      * @param int $timeout How long to wait for the connection to open
-     * @param array $options An array of options for stream_context_create()
+     * @param mixed[] $options An array of options for stream_context_create()
      */
     public function connect(string $host, int $port = null, int $timeout = 30, array $options = []): void
     {
@@ -137,7 +143,7 @@ class SmtpConnection
             set_error_handler([$this, 'errorHandler']);
             if (self::hasStreamApi()) {
                 $socket_context = stream_context_create($options);
-                $this->socket = stream_socket_client(
+                $socket = stream_socket_client(
                     sprintf('%s:%d', $host, $port),
                     $errno,
                     $errstr,
@@ -151,16 +157,17 @@ class SmtpConnection
                     'Connection: stream_socket_client not available, falling back to fsockopen',
                     self::DEBUG_CONNECTION
                 );
-                $this->socket = fsockopen($host, $port, $errno, $errstr, $timeout);
+                $socket = fsockopen($host, $port, $errno, $errstr, $timeout);
             }
         } finally {
             restore_error_handler();
         }
 
         // Verify we connected properly
-        if (!$this->checkConnection()) {
+        if (false === $socket) {
             throw new SmtpConnectionRuntimeException(sprintf('Failed to connect to server: %s', $errstr), $errno);
         }
+        $this->socket = $socket;
 
         $this->log('Connection: opened', self::DEBUG_CONNECTION);
 
@@ -172,7 +179,7 @@ class SmtpConnection
             if (0 !== $max && $timeout > $max) {
                 @set_time_limit($timeout);
             }
-            stream_set_timeout($this->socket, $timeout, 0);
+            stream_set_timeout($this->getSocket(), $timeout, 0);
         }
 
         // get any announcement
@@ -196,7 +203,7 @@ class SmtpConnection
      */
     public function connected(): bool
     {
-        if ($this->checkConnection()) {
+        if (is_resource($this->socket)) {
             if (true === $this->getStreamStatus('eof')) {
                 // The socket is valid but we are not connected
                 $this->log('SMTP NOTICE: EOF caught while checking if connected', self::DEBUG_CLIENT);
@@ -212,19 +219,11 @@ class SmtpConnection
     }
 
     /**
-     * Checks valid connection.
-     */
-    public function checkConnection(): bool
-    {
-        return is_resource($this->socket);
-    }
-
-    /**
      * @return mixed
      */
     private function getStreamStatus(string $key)
     {
-        $info = stream_get_meta_data($this->socket);
+        $info = stream_get_meta_data($this->getSocket());
 
         return $info[$key];
     }
@@ -253,7 +252,7 @@ class SmtpConnection
     public function close(): void
     {
         $this->serverCapabilities = null;
-        if ($this->checkConnection()) {
+        if (is_resource($this->socket)) {
             // close the connection and cleanup
             @fclose($this->socket);
             $this->socket = null; //Makes for cleaner serialization
@@ -284,7 +283,7 @@ class SmtpConnection
     protected function fetchLinesFromServer(): string
     {
         // If the connection is bad, give up straight away
-        if (!$this->checkConnection()) {
+        if (!is_resource($this->socket)) {
             return '';
         }
 
@@ -296,9 +295,9 @@ class SmtpConnection
         }
         $selR = [$this->socket];
         $selW = null;
-        while ($this->checkConnection() and !feof($this->socket)) {
+        while (is_resource($this->socket) && !feof($this->socket)) {
             //Must pass vars in here as params are by reference
-            if (!stream_select($selR, $selW, $selW, $this->timeLimit)) {
+            if (stream_select($selR, $selW, $selW, $this->timeLimit) <= 0) {
                 $this->log(
                     sprintf('SMTP::fetchLinesFromServer(): timed-out (%d sec)', $this->timeout),
                     self::DEBUG_LOWLEVEL
@@ -353,7 +352,7 @@ class SmtpConnection
         ?string &$code_ex,
         ?string &$detail
     ): void {
-        if (preg_match('/^(\d{3})[ -](?:(\d\\.\d\\.\d{1,2}) )?/', $response, $matches)) {
+        if (1 === preg_match('/^(\d{3})[ -](?:(\d\\.\d\\.\d{1,2}) )?/', $response, $matches)) {
             $code = $matches[1];
             $code_ex = (count($matches) > 2 ? $matches[2] : null);
             // cut off error code from each response line
@@ -362,16 +361,20 @@ class SmtpConnection
                 '',
                 $response
             );
-        } elseif ('' !== $response) {
+            return;
+        }
+
+        if ('' !== $response) {
             // fall back to simple parsing if regex fails
             $code = substr($response, 0, 3);
             $code_ex = null;
             $detail = substr($response, 4);
-        } else {
-            $code = '500';
-            $code_ex = null;
-            $detail = 'empty response';
+            return;
         }
+
+        $code = '500';
+        $code_ex = null;
+        $detail = 'empty response';
     }
 
     /**
@@ -449,7 +452,7 @@ class SmtpConnection
 
         //Reject line breaks in all commands
         if (strpos($commandRaw, "\n") !== false || strpos($commandRaw, "\r") !== false) {
-            throw new SmtpConnectionLogicException("Command '$command' contained line breaks");
+            throw new SmtpConnectionLogicException("Command $command contained line breaks");
         }
 
         $this->sendRaw($commandRaw . self::CRLF, $command);
@@ -510,7 +513,7 @@ class SmtpConnection
     public function send(string $message)
     {
         set_error_handler([$this, 'errorHandler']);
-        $result = fwrite($this->socket, $message);
+        $result = fwrite($this->getSocket(), $message);
         restore_error_handler();
 
         return $result;
@@ -668,11 +671,7 @@ class SmtpConnection
 
         // Begin encrypted connection
         set_error_handler([$this, 'errorHandler']);
-        $crypto_ok = stream_socket_enable_crypto(
-            $this->socket,
-            true,
-            $crypto_method
-        );
+        $crypto_ok = stream_socket_enable_crypto($this->getSocket(), true, $crypto_method);
         restore_error_handler();
 
         return (bool)$crypto_ok;
@@ -680,6 +679,7 @@ class SmtpConnection
 
     /**
      * Get SMTP extensions available on the server.
+     * @return mixed[]|null
      */
     public function getServerCapabilities(): ?array
     {
@@ -705,7 +705,7 @@ class SmtpConnection
      */
     public function getServerCapability(string $name)
     {
-        if (count($this->serverCapabilities) === 0) {
+        if (null === $this->serverCapabilities || count($this->serverCapabilities) === 0) {
             throw new SmtpConnectionLogicException('No HELO/EHLO was sent');
         }
 
@@ -737,6 +737,18 @@ class SmtpConnection
     protected function errorHandler(int $errno, string $errmsg, string $errfile = '', int $errline = 0): void
     {
         throw new SmtpConnectionRuntimeException($errmsg, $errno);
+    }
+
+    /**
+     * @return resource
+     */
+    protected function getSocket()
+    {
+        if (!is_resource($this->socket)) {
+            throw new SmtpConnectionRuntimeException('Please connect first');
+        }
+
+        return $this->socket;
     }
 
     public function __destruct()
