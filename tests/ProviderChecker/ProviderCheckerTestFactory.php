@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AssoConnect\SmtpToolbox\Tests\ProviderChecker;
 
 use AssoConnect\SmtpToolbox\Connection\SmtpConnection;
+use AssoConnect\SmtpToolbox\ProviderChecker\OrangeProviderChecker;
 use AssoConnect\SmtpToolbox\ProviderChecker\OvhProviderChecker;
 use AssoConnect\SmtpToolbox\ProviderChecker\LaposteProviderChecker;
 use AssoConnect\SmtpToolbox\ProviderChecker\ProviderCheckerInterface;
@@ -13,8 +14,9 @@ use Psr\Log\NullLogger;
 
 class ProviderCheckerTestFactory
 {
-    public const IMPLEMENTATIONS = [
+    public const CLASSES = [
         LaposteProviderChecker::class,
+        OrangeProviderChecker::class,
         OvhProviderChecker::class,
         SfrProviderChecker::class,
     ];
@@ -24,6 +26,6 @@ class ProviderCheckerTestFactory
     {
         return array_map(function (string $class): ProviderCheckerInterface {
             return new $class(new SmtpConnection(new NullLogger()));
-        }, self::IMPLEMENTATIONS);
+        }, self::CLASSES);
     }
 }
