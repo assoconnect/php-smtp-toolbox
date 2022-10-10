@@ -19,11 +19,6 @@ class LaposteProviderChecker extends AbstractProviderChecker
         'laposte.net',
     ];
 
-    public function supportsDomain(string $domainName): bool
-    {
-        return in_array($domainName, self::DOMAINS, true);
-    }
-
     public function check(string $email): bool
     {
         $this->connection->connect('smtp.laposte.net', 587);
