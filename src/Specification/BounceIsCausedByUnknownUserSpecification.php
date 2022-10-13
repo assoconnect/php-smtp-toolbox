@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\Specification;
 
-class HardBounceIsCausedByUnknownUserSpecification
+class BounceIsCausedByUnknownUserSpecification implements BounceCauseSpecificationInterface
 {
     private const NEEDLES = [
         // GMail: 5.1.1 The email account that you tried to reach does not exist.

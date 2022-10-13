@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\Tests\Specification;
 
-use AssoConnect\SmtpToolbox\Specification\HardBounceIsSpamRelatedSpecification;
+use AssoConnect\SmtpToolbox\Specification\BounceIsSpamRelatedSpecification;
 use PHPUnit\Framework\TestCase;
 
-class HardBounceIsSpamRelatedSpecificationTest extends TestCase
+class BounceIsSpamRelatedSpecificationTest extends TestCase
 {
     /** @dataProvider provideMessages */
     public function testSpecificationWorks(string $message, bool $isSpam): void
     {
-        $spec = new HardBounceIsSpamRelatedSpecification();
+        $spec = new BounceIsSpamRelatedSpecification();
         self::assertSame($isSpam, $spec->isSatisfiedBy($message));
     }
 
