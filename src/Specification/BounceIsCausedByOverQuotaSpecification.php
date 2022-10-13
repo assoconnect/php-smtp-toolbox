@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\Specification;
 
-class HardBounceIsCausedByOverQuotaSpecification
+class BounceIsCausedByOverQuotaSpecification implements BounceCauseSpecificationInterface
 {
     private const NEEDLES = [
         // Free: 552 5.2.2 user quota exceeded (UserSearch)

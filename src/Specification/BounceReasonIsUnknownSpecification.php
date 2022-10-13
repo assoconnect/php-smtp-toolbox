@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\Specification;
 
-class HardBounceIsCausedByInactiveUserSpecification
+class BounceReasonIsUnknownSpecification implements BounceCauseSpecificationInterface
 {
     private const NEEDLES = [
-        // La Poste: 4.2.1 <xxx@laposte.net>: Recipient address rejected: this mailbox is inactive and has been disabled
-        'Recipient address rejected: this mailbox is inactive and has been disabled',
+        // Sendinblue
+        'hard bounce',
     ];
 
     public function isSatisfiedBy(string $message): bool

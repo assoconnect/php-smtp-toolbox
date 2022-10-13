@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\Tests\Specification;
 
-use AssoConnect\SmtpToolbox\Specification\HardBounceIsCausedByOverQuotaSpecification;
+use AssoConnect\SmtpToolbox\Specification\BounceIsCausedByUnknownUserSpecification;
 use PHPUnit\Framework\TestCase;
 
-class HardBounceIsCausedByOverQuotaSpecificationTest extends TestCase
+class BounceIsCausedByUnknownUserSpecificationTest extends TestCase
 {
     /** @dataProvider provideMessages */
     public function testSpecificationWorks(string $message, bool $isSpam): void
     {
-        $spec = new HardBounceIsCausedByOverQuotaSpecification();
+        $spec = new BounceIsCausedByUnknownUserSpecification();
         self::assertSame($isSpam, $spec->isSatisfiedBy($message));
     }
 
@@ -20,8 +20,6 @@ class HardBounceIsCausedByOverQuotaSpecificationTest extends TestCase
     public function provideMessages(): iterable
     {
         yield ['Email rejected per SPAM policy', false];
-        yield [<<<MESSAGE
-554 5.2.2 <xxx@free.fr>: Recipient address rejected: Quota exceeded (mailbox for user is full)
-MESSAGE, true];
+        yield ['Sender address rejected: Sender user unknown.  Adresse expediteur inconnue', true];
     }
 }

@@ -1,0 +1,12 @@
+bounce:
+  reason:
+    inactive: "The recipient's mailbox has been disabled."
+    quota: "The recipient's mailbox is full and cannot accept new emails at the moment"
+    none: "No further explanation was given by the recipient's email system."
+    other: ""
+    spam: "The recipient's email system flagged the email as spam and refuse to deliver it."
+    unknown_user: "This email address doesn't exist."
+  tips:
+    contact: "Please tell the recipient about this issue so it can be resolved."
+    none: ""
+    review: "Please check the email address for typo."
