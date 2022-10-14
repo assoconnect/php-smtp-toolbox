@@ -15,7 +15,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class BounceReasonTranslatable implements TranslatableInterface
 {
-    public const TRANSLATION_DOMAIN = 'assoconnec_smtp_toolbox';
+    public const TRANSLATION_DOMAIN = 'assoconnect_smtp_toolbox';
 
     /** @var string[] */
     private array $translationKeys;
