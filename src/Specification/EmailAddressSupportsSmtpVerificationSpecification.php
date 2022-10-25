@@ -26,7 +26,10 @@ class EmailAddressSupportsSmtpVerificationSpecification
 
     public function isSatisfiedBy(string $candidate): bool
     {
-        $domain = explode('@', $candidate)[1];
+        $domain = explode('@', $candidate)[1] ?? null;
+        if (null === $domain) {
+            return false;
+        }
 
         // Early return for excluded domains
         if (in_array($domain, EmailAddressUsesAFrenchMxServerSpecification::NON_FRENCH_DOMAINS, true)) {
