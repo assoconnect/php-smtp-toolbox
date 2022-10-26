@@ -61,7 +61,10 @@ class EmailAddressUsesAFrenchMxServerSpecification
 
     public function isSatisfiedBy(string $candidate): bool
     {
-        $domain = explode('@', $candidate)[1];
+        $domain = explode('@', $candidate)[1] ?? null;
+        if (null === $domain) {
+            return false;
+        }
 
         $frenchDomains = array_merge(
             self::FRENCH_DOMAINS,

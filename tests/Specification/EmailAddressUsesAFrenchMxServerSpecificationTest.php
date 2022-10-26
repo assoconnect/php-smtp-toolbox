@@ -25,6 +25,7 @@ class EmailAddressUsesAFrenchMxServerSpecificationTest extends TestCase
         yield ['test@gmail.com', false];
         yield ['test@hotmail.com', false];
         yield ['test@assoconnect.com', false];
+        yield ['invalid email', false];
 
         yield ['test@laposte.net', true];
         yield ['test@sfr.fr', true];

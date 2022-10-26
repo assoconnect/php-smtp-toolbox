@@ -30,6 +30,7 @@ class EmailAddressSupportsSmtpVerificationSpecificationTest extends TestCase
         yield ['test@noos.fr', true];
 
         // Unsupported email addresses
+        yield ['invalid email', false];
         yield ['test@gmail.com', false];
     }
 }
