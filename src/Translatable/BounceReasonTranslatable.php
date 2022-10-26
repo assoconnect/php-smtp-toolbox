@@ -15,8 +15,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class BounceReasonTranslatable implements TranslatableInterface
 {
-    public const TRANSLATION_DOMAIN = 'assoconnect_smtp_toolbox';
-
     /** @var string[] */
     private array $translationKeys;
 
@@ -28,8 +26,8 @@ class BounceReasonTranslatable implements TranslatableInterface
     public function trans(TranslatorInterface $translator, string $locale = null): string
     {
         return implode('', array_filter([
-            $translator->trans('bounce.reason.' . $this->translationKeys[0], [], self::TRANSLATION_DOMAIN),
-            $translator->trans('bounce.tips.' . $this->translationKeys[1], [], self::TRANSLATION_DOMAIN),
+            $translator->trans('bounce.reason.' . $this->translationKeys[0], [], 'assoconnect_smtp_toolbox'),
+            $translator->trans('bounce.tips.' . $this->translationKeys[1], [], 'assoconnect_smtp_toolbox'),
         ]));
     }
 

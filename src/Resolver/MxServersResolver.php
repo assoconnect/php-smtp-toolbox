@@ -22,7 +22,7 @@ class MxServersResolver
      */
     public function getMxServers(string $domain): ?array
     {
-        //We store mxcheck result in cache
+        // MX servers are cached
         $cacheItem = $this->cache->getItem(self::CACHE_KEY . $domain);
 
         if ($cacheItem->isHit()) {
@@ -34,6 +34,10 @@ class MxServersResolver
         }
 
         getmxrr($domain, $hosts);
+
+        // Force lowercase
+        $hosts = array_map('strtolower', $hosts);
+
         $cacheItem->set($hosts);
         $this->cache->save($cacheItem);
 
