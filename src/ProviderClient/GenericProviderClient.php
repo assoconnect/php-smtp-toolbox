@@ -9,6 +9,7 @@ use AssoConnect\SmtpToolbox\Dto\InvalidAddressDto;
 use AssoConnect\SmtpToolbox\Dto\ValidAddressDto;
 use AssoConnect\SmtpToolbox\Dto\ValidationStatusDtoInterface;
 use AssoConnect\SmtpToolbox\Exception\SmtpConnectionRuntimeException;
+use AssoConnect\SmtpToolbox\Exception\SmtpUnableToConnectException;
 
 class GenericProviderClient
 {
@@ -45,6 +46,12 @@ class GenericProviderClient
 
             if (550 === $exception->getCode()) {
                 return InvalidAddressDto::unknownUser($email, $response);
+            }
+            if (552 === $exception->getCode()) {
+                return new ValidAddressDto($email);
+            }
+            if (preg_match('/Connection timed out/', $exception->getMessage())) {
+                throw new SmtpUnableToConnectException($exception->getMessage(), $exception->getCode(), $exception);
             }
 
             throw $exception;

@@ -8,7 +8,6 @@ use AssoConnect\SmtpToolbox\Dto\InvalidAddressDto;
 use AssoConnect\SmtpToolbox\Dto\UnverifiedAddressDto;
 use AssoConnect\SmtpToolbox\Dto\ValidationStatusDtoInterface;
 use AssoConnect\SmtpToolbox\Exception\SmtpConnectionRuntimeException;
-use AssoConnect\SmtpToolbox\ProviderClient\CustomProviderClientInterface;
 use AssoConnect\SmtpToolbox\ProviderClient\GenericProviderClient;
 use AssoConnect\SmtpToolbox\Resolver\MxServersResolver;
 use Psr\Log\LoggerInterface;
@@ -49,11 +48,13 @@ class SmtpValidator
                 return $this->genericProviderClient->check($email, $mxServer);
             } catch (SmtpConnectionRuntimeException $exception) {
                 $this->logger->debug(sprintf(
-                    '%s - %s responded: %s',
+                    '%s - %s responded: %s (%i)',
                     $email,
                     $mxServer,
-                    $exception->getMessage()
+                    $exception->getMessage(),
+                    $exception->getCode()
                 ));
+                throw $exception;
             }
         }
 
