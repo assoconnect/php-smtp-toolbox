@@ -9,7 +9,8 @@ use AssoConnect\SmtpToolbox\Dto\InvalidAddressDto;
 use AssoConnect\SmtpToolbox\Dto\ValidAddressDto;
 use AssoConnect\SmtpToolbox\Dto\ValidationStatusDtoInterface;
 use AssoConnect\SmtpToolbox\Exception\SmtpConnectionRuntimeException;
-use AssoConnect\SmtpToolbox\Exception\SmtpUnableToConnectException;
+use AssoConnect\SmtpToolbox\Exception\SmtpTemporaryFailureException;
+use AssoConnect\SmtpToolbox\Specification\ExceptionComesFromTemporaryFailureSpecification;
 
 class GenericProviderClient
 {
@@ -20,12 +21,16 @@ class GenericProviderClient
      * Warning: some MX servers require the domain to point to an IP with a valid reverse DNS record
      */
     private string $host;
+    private ExceptionComesFromTemporaryFailureSpecification $exceptionComesFromTemporaryFailureSpecification;
 
     public function __construct(
-        SmtpConnection $connection,
-        string $host
-    ) {
+        SmtpConnection                                  $connection,
+        ExceptionComesFromTemporaryFailureSpecification $exceptionComesFromTemporaryFailureSpecification,
+        string                                          $host
+    )
+    {
         $this->connection = $connection;
+        $this->exceptionComesFromTemporaryFailureSpecification = $exceptionComesFromTemporaryFailureSpecification;
         $this->host = $host;
     }
 
@@ -50,8 +55,8 @@ class GenericProviderClient
             if (552 === $exception->getCode()) {
                 return new ValidAddressDto($email);
             }
-            if (preg_match('/Connection timed out/', $exception->getMessage())) {
-                throw new SmtpUnableToConnectException($exception->getMessage(), $exception->getCode(), $exception);
+            if ($this->exceptionComesFromTemporaryFailureSpecification->isSatisfiedBy($exception)) {
+                throw new SmtpTemporaryFailureException($exception->getMessage(), $exception->getCode(), $exception);
             }
 
             throw $exception;

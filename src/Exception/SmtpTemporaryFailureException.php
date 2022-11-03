@@ -2,6 +2,6 @@
 
 namespace AssoConnect\SmtpToolbox\Exception;
 
-class SmtpUnableToConnectException extends \Exception
+class SmtpTemporaryFailureException extends \Exception
 {
 }
