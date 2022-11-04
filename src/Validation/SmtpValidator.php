@@ -12,7 +12,7 @@ use AssoConnect\SmtpToolbox\ProviderClient\GenericProviderClient;
 use AssoConnect\SmtpToolbox\Resolver\MxServersResolver;
 use Psr\Log\LoggerInterface;
 
-class SmtpValidator
+class SmtpValidator implements SmtpValidatorInterface
 {
     private MxServersResolver $mxServersResolver;
     private GenericProviderClient $genericProviderClient;
@@ -48,7 +48,7 @@ class SmtpValidator
                 return $this->genericProviderClient->check($email, $mxServer);
             } catch (SmtpConnectionRuntimeException $exception) {
                 $this->logger->debug(sprintf(
-                    '%s - %s responded: %s (%i)',
+                    '%s - %s responded: %s (%d)',
                     $email,
                     $mxServer,
                     $exception->getMessage(),
