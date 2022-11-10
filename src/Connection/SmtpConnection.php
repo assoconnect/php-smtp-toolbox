@@ -471,7 +471,7 @@ class SmtpConnection
         if (!$success) {
             throw new SmtpConnectionRuntimeException(
                 sprintf('%s command failed: %s', $command, $this->lastReply),
-                (int) $code
+                (int)$code
             );
         }
     }

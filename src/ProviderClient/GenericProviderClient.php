@@ -24,11 +24,10 @@ class GenericProviderClient
     private ExceptionComesFromTemporaryFailureSpecification $exceptionComesFromTemporaryFailureSpecification;
 
     public function __construct(
-        SmtpConnection                                  $connection,
+        SmtpConnection $connection,
         ExceptionComesFromTemporaryFailureSpecification $exceptionComesFromTemporaryFailureSpecification,
-        string                                          $host
-    )
-    {
+        string $host
+    ) {
         $this->connection = $connection;
         $this->exceptionComesFromTemporaryFailureSpecification = $exceptionComesFromTemporaryFailureSpecification;
         $this->host = $host;
@@ -36,11 +35,10 @@ class GenericProviderClient
 
     public function check(string $email, string $mxServer): ValidationStatusDtoInterface
     {
-        $this->connection->connect($mxServer);
-        $this->connection->hello($this->host);
-        $this->connection->mail('john@' . $this->host);
-
         try {
+            $this->connection->connect($mxServer);
+            $this->connection->hello($this->host);
+            $this->connection->mail('john@' . $this->host);
             $this->connection->recipient($email);
             $this->connection->quit();
 
