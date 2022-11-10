@@ -4,43 +4,37 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\Specification;
 
-use AssoConnect\SmtpToolbox\ProviderChecker\LaposteProviderChecker;
-use AssoConnect\SmtpToolbox\ProviderChecker\OvhProviderChecker;
-use AssoConnect\SmtpToolbox\ProviderChecker\SfrProviderChecker;
 use AssoConnect\SmtpToolbox\Resolver\MxServersResolver;
 
 class EmailAddressUsesAFrenchMxServerSpecification
 {
-    public const FRENCH_DOMAINS = [
+    public const DOMAINS = [
         // Free
         'aliceadsl.fr',
         'free.fr',
         // Orange
         'orange.fr',
         'wanadoo.fr',
+        // SFR
+        '9online.fr',
+        'cegetel.net',
+        'club.fr',
+        'club-internet.fr',
+        'estvideo.fr',
+        'evc.net',
+        'modulonet.fr',
+        'neuf.fr',
+        'noos.fr',
+        'numericable.com',
+        'numericable.fr',
+        'numericable-caraibes.fr',
+        'sfr.fr',
         // Single domains
         'bbox.fr',
+        'laposte.net',
     ];
 
-    public const NON_FRENCH_DOMAINS = [
-        // Google
-        'gmail.com',
-        // Microsoft
-        'hotmail.fr',
-        'hotmail.com',
-        'live.fr',
-        'outlook.com',
-        'outlook.fr',
-        // Single domains
-        'yahoo.com',
-        'yahoo.fr',
-        // Custom domains
-        'assoconnect.com', // Google
-        'epgv.fr', // Microsoft
-        'etikl.com', // Google
-        'mot.asso.fr' // Microsoft
-    ];
-    public const FRENCH_MX_SERVERS = [
+    public const MX_SERVERS = [
         // 1&1
         'mx00.ionos.fr',
         // Free
@@ -49,7 +43,17 @@ class EmailAddressUsesAFrenchMxServerSpecification
         // Infomaniak
         'mta-gw.infomaniak.ch',
         // Orange
+        'smtp-in.orange.fr',
         'mx.mailbox.orange-business.com',
+        // OVH
+        'mxb.ovh.net',
+        'mx1.ovh.net',
+        'mx2.ovh.net',
+        'mx3.ovh.net',
+        'mx4.ovh.net',
+        'mx1.mail.ovh.net',
+        'mx2.mail.ovh.net',
+        'mx3.mail.ovh.net',
     ];
 
     private MxServersResolver $mxServerResolver;
@@ -66,24 +70,15 @@ class EmailAddressUsesAFrenchMxServerSpecification
             return false;
         }
 
-        $frenchDomains = array_merge(
-            self::FRENCH_DOMAINS,
-            LaposteProviderChecker::DOMAINS,
-            SfrProviderChecker::DOMAINS,
-        );
-        if (in_array($domain, $frenchDomains, true)) {
+        if (in_array($domain, self::DOMAINS, true)) {
             return true;
         }
 
-        if (in_array($domain, self::NON_FRENCH_DOMAINS, true)) {
+        if (in_array($domain, EmailAddressUsesAnUSMxServerSpecification::DOMAINS, true)) {
             return false;
         }
 
         $mxServers = $this->mxServerResolver->getMxServers($domain) ?? [];
-        $frenchMxServers = array_merge(
-            self::FRENCH_MX_SERVERS,
-            OvhProviderChecker::MX_SERVERS,
-        );
-        return [] !== array_intersect($frenchMxServers, $mxServers);
+        return [] !== array_intersect(self::MX_SERVERS, $mxServers);
     }
 }

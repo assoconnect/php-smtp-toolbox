@@ -108,11 +108,11 @@ class SmtpConnection
      * Connect to an SMTP server.
      *
      * @param string $host SMTP server IP or host name
-     * @param ?int $port The port number to connect to
+     * @param int $port The port number to connect to
      * @param int $timeout How long to wait for the connection to open
      * @param mixed[] $options An array of options for stream_context_create()
      */
-    public function connect(string $host, int $port = null, int $timeout = 30, array $options = []): void
+    public function connect(string $host, int $port = self::DEFAULT_PORT, int $timeout = 5, array $options = []): void
     {
         // make sure we are __not__ connected
         if ($this->connected()) {
@@ -120,10 +120,6 @@ class SmtpConnection
         }
 
         $this->transferLogs = [];
-
-        if ($port === null) {
-            $port = self::DEFAULT_PORT;
-        }
 
         $this->log(
             sprintf(
@@ -357,7 +353,9 @@ class SmtpConnection
             $code_ex = (count($matches) > 2 ? $matches[2] : null);
             // cut off error code from each response line
             $detail = preg_replace(
-                "/{$code}[ -]" . ($code_ex ? str_replace('.', '\\.', $code_ex) . ' ' : '') . '/m',
+                "/{$code}[ -]"
+                . (null !== $code_ex ? str_replace('.', '\\.', $code_ex) . ' ' : '')
+                . '/m',
                 '',
                 $response
             );
@@ -475,7 +473,7 @@ class SmtpConnection
         if (!$success) {
             throw new SmtpConnectionRuntimeException(
                 sprintf('%s command failed: %s', $command, $this->lastReply),
-                (int) $code
+                (int)$code
             );
         }
     }

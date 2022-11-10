@@ -10,3 +10,9 @@ bounce:
     contact: "Informez le destinataire de ce problème pour qu'il soit corrigé."
     none: ""
     review: "Vérifiez l'adresse enregistrée : elle contient peut-être une faute de frappe."
+invalid_address:
+  no_at_symbol: "L'adresse {{ email }} ne contient pas le signe @"
+  no_mx_servers: "Aucun serveur email n'est configuré pour le domain {{ domain }}"
+  unknown_user: >
+    L'adresse {{ email }} n'existe pas chez {{ domain }} :
+    {{ smtpResponse }}
