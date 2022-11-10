@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace AssoConnect\SmtpToolbox\Validation;
 
 use AssoConnect\SmtpToolbox\Dto\InvalidAddressDto;
-use AssoConnect\SmtpToolbox\Dto\UnverifiedAddressDto;
 use AssoConnect\SmtpToolbox\Dto\ValidationStatusDtoInterface;
 use AssoConnect\SmtpToolbox\Exception\SmtpConnectionRuntimeException;
 use AssoConnect\SmtpToolbox\ProviderClient\GenericProviderClient;
@@ -47,17 +46,17 @@ class SmtpValidator implements SmtpValidatorInterface
             try {
                 return $this->genericProviderClient->check($email, $mxServer);
             } catch (SmtpConnectionRuntimeException $exception) {
-                $this->logger->debug(sprintf(
-                    '%s - %s responded: %s (%d)',
-                    $email,
-                    $mxServer,
-                    $exception->getMessage(),
-                    $exception->getCode()
-                ));
+                $this->logger->debug(
+                    sprintf(
+                        '%s - %s responded: %s (%d)',
+                        $email,
+                        $mxServer,
+                        $exception->getMessage(),
+                        $exception->getCode()
+                    )
+                );
                 throw $exception;
             }
         }
-
-        return new UnverifiedAddressDto($email);
     }
 }

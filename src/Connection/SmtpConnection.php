@@ -353,7 +353,9 @@ class SmtpConnection
             $code_ex = (count($matches) > 2 ? $matches[2] : null);
             // cut off error code from each response line
             $detail = preg_replace(
-                "/{$code}[ -]" . ($code_ex ? str_replace('.', '\\.', $code_ex) . ' ' : '') . '/m',
+                "/{$code}[ -]"
+                . (null !== $code_ex ? str_replace('.', '\\.', $code_ex) . ' ' : '')
+                . '/m',
                 '',
                 $response
             );

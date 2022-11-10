@@ -7,6 +7,7 @@ use AssoConnect\SmtpToolbox\Dto\InvalidAddressDto;
 use AssoConnect\SmtpToolbox\Dto\ValidAddressDto;
 use AssoConnect\SmtpToolbox\Dto\ValidationStatusDtoInterface;
 use AssoConnect\SmtpToolbox\ProviderClient\GenericProviderClient;
+use AssoConnect\SmtpToolbox\Specification\ExceptionComesFromTemporaryFailureSpecification;
 use AssoConnect\SmtpToolbox\Tests\Resolver\MxServersResolverTestFactory;
 use AssoConnect\SmtpToolbox\Validation\SmtpValidator;
 use PHPUnit\Framework\TestCase;
@@ -21,7 +22,11 @@ class SmtpValidatorTest extends TestCase
         $logger = new NullLogger();
         $this->validator = new SmtpValidator(
             MxServersResolverTestFactory::create(),
-            new GenericProviderClient(new SmtpConnection($logger), 'hello.org'),
+            new GenericProviderClient(
+                new SmtpConnection($logger),
+                new ExceptionComesFromTemporaryFailureSpecification(),
+                'hello.org'
+            ),
             $logger
         );
     }
