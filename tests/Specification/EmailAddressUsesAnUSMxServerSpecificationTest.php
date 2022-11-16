@@ -29,5 +29,6 @@ class EmailAddressUsesAnUSMxServerSpecificationTest extends TestCase
         yield ['test@gmail.com', true];
         yield ['test@hotmail.com', true];
         yield ['test@assoconnect.com', true];
+        yield ['contact@medireport.fr', true];
     }
 }
