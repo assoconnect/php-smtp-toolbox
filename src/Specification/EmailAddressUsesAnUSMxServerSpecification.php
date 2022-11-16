@@ -31,6 +31,7 @@ class EmailAddressUsesAnUSMxServerSpecification
         'aspmx2.googlemail.com',
         'aspmx3.googlemail.com',
     ];
+    public const MICROSOFT_CUSTOM_MX_SERVER_REGEX = '/.*\.mail\.protection\.outlook\.com/';
 
     private MxServersResolver $mxServerResolver;
 
@@ -55,6 +56,8 @@ class EmailAddressUsesAnUSMxServerSpecification
         }
 
         $mxServers = $this->mxServerResolver->getMxServers($domain) ?? [];
-        return [] !== array_intersect(self::MX_SERVERS, $mxServers);
+
+        return [] !== preg_grep(self::MICROSOFT_CUSTOM_MX_SERVER_REGEX, $mxServers)
+            || [] !== array_intersect(self::MX_SERVERS, $mxServers);
     }
 }
