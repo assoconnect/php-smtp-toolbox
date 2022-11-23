@@ -2,10 +2,10 @@
 
 namespace AssoConnect\SmtpToolbox\Tests\Validation;
 
-use AssoConnect\SmtpToolbox\Connection\SmtpConnection;
 use AssoConnect\SmtpToolbox\Dto\InvalidAddressDto;
 use AssoConnect\SmtpToolbox\Dto\ValidAddressDto;
 use AssoConnect\SmtpToolbox\Dto\ValidationStatusDtoInterface;
+use AssoConnect\SmtpToolbox\Exception\SmtpTemporaryFailureException;
 use AssoConnect\SmtpToolbox\ProviderClient\GenericProviderClient;
 use AssoConnect\SmtpToolbox\Specification\ExceptionComesFromTemporaryFailureSpecification;
 use AssoConnect\SmtpToolbox\Tests\Resolver\MxServersResolverTestFactory;
@@ -23,17 +23,17 @@ class SmtpValidatorTest extends TestCase
         $this->validator = new SmtpValidator(
             MxServersResolverTestFactory::create(),
             new GenericProviderClient(
-                new SmtpConnection($logger),
+                $logger,
                 new ExceptionComesFromTemporaryFailureSpecification(),
                 'hello.org'
-            ),
-            $logger
+            )
         );
     }
 
     /**
      * @dataProvider provideEmailAddresses
      * @param class-string<ValidationStatusDtoInterface> $expectedDtoClass
+     * @throws SmtpTemporaryFailureException
      */
     public function testClientWorks(string $email, string $expectedDtoClass): void
     {

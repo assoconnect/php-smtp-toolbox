@@ -6,25 +6,20 @@ namespace AssoConnect\SmtpToolbox\Validation;
 
 use AssoConnect\SmtpToolbox\Dto\InvalidAddressDto;
 use AssoConnect\SmtpToolbox\Dto\ValidationStatusDtoInterface;
-use AssoConnect\SmtpToolbox\Exception\SmtpConnectionRuntimeException;
 use AssoConnect\SmtpToolbox\ProviderClient\GenericProviderClient;
 use AssoConnect\SmtpToolbox\Resolver\MxServersResolver;
-use Psr\Log\LoggerInterface;
 
 class SmtpValidator implements SmtpValidatorInterface
 {
     private MxServersResolver $mxServersResolver;
     private GenericProviderClient $genericProviderClient;
-    private LoggerInterface $logger;
 
     public function __construct(
         MxServersResolver $mxServersResolver,
-        GenericProviderClient $genericProviderClient,
-        LoggerInterface $logger
+        GenericProviderClient $genericProviderClient
     ) {
         $this->mxServersResolver = $mxServersResolver;
         $this->genericProviderClient = $genericProviderClient;
-        $this->logger = $logger;
     }
 
     public function validate(string $email): ValidationStatusDtoInterface
@@ -43,20 +38,7 @@ class SmtpValidator implements SmtpValidatorInterface
         }
 
         foreach ($mxServers as $mxServer) {
-            try {
-                return $this->genericProviderClient->check($email, $mxServer);
-            } catch (SmtpConnectionRuntimeException $exception) {
-                $this->logger->debug(
-                    sprintf(
-                        '%s - %s responded: %s (%d)',
-                        $email,
-                        $mxServer,
-                        $exception->getMessage(),
-                        $exception->getCode()
-                    )
-                );
-                throw $exception;
-            }
+            return $this->genericProviderClient->check($email, $mxServer);
         }
     }
 }
