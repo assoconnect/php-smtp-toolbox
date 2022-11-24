@@ -11,11 +11,12 @@ class SmtpConnectionRuntimeException extends \RuntimeException
     {
         return new self(
             sprintf(
-                '%s failed: %s (%s - %s)',
+                '%s failed: %s (%s - %s), "%s"',
                 $command,
                 $smtpError['error'],
                 $smtpError['smtp_code'],
-                $smtpError['smtp_code_ex']
+                $smtpError['smtp_code_ex'],
+                $smtpError['detail']
             ),
             (int)$smtpError['smtp_code']
         );
