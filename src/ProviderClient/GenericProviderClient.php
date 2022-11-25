@@ -71,7 +71,12 @@ class GenericProviderClient
                     );
                 }
             }
-            $this->connection->mail('john@' . $this->host);
+            if (!$this->connection->mail('john@' . $this->host)) {
+                throw SmtpConnectionRuntimeException::createFromSmtpError(
+                    "MAIL FROM",
+                    $this->connection->getError()
+                );
+            }
             if (!$this->connection->recipient($email)) {
                 throw SmtpConnectionRuntimeException::createFromSmtpError(
                     'RCPT TO',
