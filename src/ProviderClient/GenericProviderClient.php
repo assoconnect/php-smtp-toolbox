@@ -15,8 +15,6 @@ use Psr\Log\LoggerInterface;
 
 class GenericProviderClient
 {
-    private SMTP $connection;
-
     /**
      * Host domain to use to connect to the MX servers
      * Warning: some MX servers require the domain to point to an IP with a valid reverse DNS record
@@ -31,8 +29,6 @@ class GenericProviderClient
         string $host
     ) {
         $this->logger = $logger;
-        $this->connection = new SMTP();
-        $this->connection->Debugoutput = $logger;
         $this->exceptionComesFromTemporaryFailureSpecification = $exceptionComesFromTemporaryFailureSpecification;
         $this->host = $host;
     }
@@ -42,48 +38,52 @@ class GenericProviderClient
      */
     public function check(string $email, string $mxServer): ValidationStatusDtoInterface
     {
+        $connection = new SMTP();
+        $connection->Debugoutput = $this->logger;
         try {
             // Based on https://github.com/PHPMailer/PHPMailer/blob/master/examples/smtp_check.phps
-            if (!$this->connection->connect($mxServer)) {
+            if (!$connection->connect($mxServer)) {
                 throw new SmtpConnectionRuntimeException(
-                    sprintf('Failed to connect to server: %s', $mxServer)
+                    sprintf('Failed to connect to server: %s', $mxServer),
+                    0,
+                    $connection->getLastReply()
                 );
             }
-            if (!$this->connection->hello($this->host)) {
+            if (!$connection->hello($this->host)) {
                 throw SmtpConnectionRuntimeException::createFromSmtpError(
                     'EHLO',
-                    $this->connection->getError()
+                    $connection
                 );
             }
-            $extensionList = $this->connection->getServerExtList();
+            $extensionList = $connection->getServerExtList();
             if (is_array($extensionList) && array_key_exists('STARTTLS', $extensionList)) {
-                if (!$this->connection->startTLS()) {
+                if (!$connection->startTLS()) {
                     throw SmtpConnectionRuntimeException::createFromSmtpError(
                         'STARTTLS',
-                        $this->connection->getError()
+                        $connection
                     );
                 }
                 // Repeat EHLO after STARTTLS
-                if (!$this->connection->hello($mxServer)) {
+                if (!$connection->hello($mxServer)) {
                     throw SmtpConnectionRuntimeException::createFromSmtpError(
                         'EHLO (2)',
-                        $this->connection->getError()
+                        $connection
                     );
                 }
             }
-            if (!$this->connection->mail('john@' . $this->host)) {
+            if (!$connection->mail('john@' . $this->host)) {
                 throw SmtpConnectionRuntimeException::createFromSmtpError(
-                    "MAIL FROM",
-                    $this->connection->getError()
+                    'MAIL FROM',
+                    $connection
                 );
             }
-            if (!$this->connection->recipient($email)) {
+            if (!$connection->recipient($email)) {
                 throw SmtpConnectionRuntimeException::createFromSmtpError(
                     'RCPT TO',
-                    $this->connection->getError()
+                    $connection
                 );
             }
-            $this->connection->quit();
+            $connection->quit();
 
             return new ValidAddressDto($email);
         } catch (SmtpConnectionRuntimeException $exception) {
@@ -96,11 +96,10 @@ class GenericProviderClient
                     $exception->getCode()
                 )
             );
-            $response = $this->connection->getLastReply();
-            $this->connection->quit();
+            $connection->quit();
 
             if (550 === $exception->getCode()) {
-                return InvalidAddressDto::unknownUser($email, $response);
+                return InvalidAddressDto::unknownUser($email, $exception->getLastReply());
             }
             if (552 === $exception->getCode()) {
                 return new ValidAddressDto($email);
