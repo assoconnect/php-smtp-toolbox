@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace AssoConnect\SmtpToolbox\ProviderClient;
 
 use AssoConnect\SmtpToolbox\Dto\InvalidAddressDto;
+use AssoConnect\SmtpToolbox\Dto\UnverifiedAddressDto;
 use AssoConnect\SmtpToolbox\Dto\ValidAddressDto;
 use AssoConnect\SmtpToolbox\Dto\ValidationStatusDtoInterface;
 use AssoConnect\SmtpToolbox\Exception\SmtpConnectionRuntimeException;
 use AssoConnect\SmtpToolbox\Exception\SmtpTemporaryFailureException;
+use AssoConnect\SmtpToolbox\Specification\BounceIsCausedByInactiveUserSpecification;
+use AssoConnect\SmtpToolbox\Specification\BounceIsCausedByUnknownUserSpecification;
 use AssoConnect\SmtpToolbox\Specification\ExceptionComesFromTemporaryFailureSpecification;
 use PHPMailer\PHPMailer\SMTP;
 use Psr\Log\LoggerInterface;
@@ -22,14 +25,20 @@ class GenericProviderClient
     private string $host;
     private ExceptionComesFromTemporaryFailureSpecification $exceptionComesFromTemporaryFailureSpecification;
     private LoggerInterface $logger;
+    private BounceIsCausedByUnknownUserSpecification $bounceIsCausedByUnknownUserSpecification;
+    private BounceIsCausedByInactiveUserSpecification $bounceIsCausedByInactiveUserSpecification;
 
     public function __construct(
         LoggerInterface $logger,
         ExceptionComesFromTemporaryFailureSpecification $exceptionComesFromTemporaryFailureSpecification,
+        BounceIsCausedByUnknownUserSpecification $bounceIsCausedByUnknownUserSpecification,
+        BounceIsCausedByInactiveUserSpecification $bounceIsCausedByInactiveUserSpecification,
         string $host
     ) {
         $this->logger = $logger;
         $this->exceptionComesFromTemporaryFailureSpecification = $exceptionComesFromTemporaryFailureSpecification;
+        $this->bounceIsCausedByUnknownUserSpecification = $bounceIsCausedByUnknownUserSpecification;
+        $this->bounceIsCausedByInactiveUserSpecification = $bounceIsCausedByInactiveUserSpecification;
         $this->host = $host;
     }
 
@@ -98,8 +107,16 @@ class GenericProviderClient
             );
             $connection->quit();
 
-            if (550 === $exception->getCode()) {
-                return InvalidAddressDto::unknownUser($email, $exception->getLastReply());
+            if (
+                550 === $exception->getCode()
+            ) {
+                if ($this->bounceIsCausedByInactiveUserSpecification->isSatisfiedBy($exception->getLastReply())) {
+                    return InvalidAddressDto::inactiveUser($email, $exception->getLastReply());
+                }
+                if ($this->bounceIsCausedByUnknownUserSpecification->isSatisfiedBy($exception->getLastReply())) {
+                    return InvalidAddressDto::unknownUser($email, $exception->getLastReply());
+                }
+                return new UnverifiedAddressDto($email);
             }
             if (552 === $exception->getCode()) {
                 return new ValidAddressDto($email);

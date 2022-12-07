@@ -7,6 +7,8 @@ use AssoConnect\SmtpToolbox\Dto\ValidAddressDto;
 use AssoConnect\SmtpToolbox\Dto\ValidationStatusDtoInterface;
 use AssoConnect\SmtpToolbox\Exception\SmtpTemporaryFailureException;
 use AssoConnect\SmtpToolbox\ProviderClient\GenericProviderClient;
+use AssoConnect\SmtpToolbox\Specification\BounceIsCausedByInactiveUserSpecification;
+use AssoConnect\SmtpToolbox\Specification\BounceIsCausedByUnknownUserSpecification;
 use AssoConnect\SmtpToolbox\Specification\ExceptionComesFromTemporaryFailureSpecification;
 use AssoConnect\SmtpToolbox\Tests\Resolver\MxServersResolverTestFactory;
 use AssoConnect\SmtpToolbox\Validation\SmtpValidator;
@@ -25,6 +27,8 @@ class SmtpValidatorTest extends TestCase
             new GenericProviderClient(
                 $logger,
                 new ExceptionComesFromTemporaryFailureSpecification(),
+                new BounceIsCausedByUnknownUserSpecification(),
+                new BounceIsCausedByInactiveUserSpecification(),
                 'hello.org'
             )
         );
