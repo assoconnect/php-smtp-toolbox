@@ -35,6 +35,11 @@ class InvalidAddressDto implements ValidationStatusDtoInterface
         return new self($email, 'unknown_user', $smtpResponse);
     }
 
+    public static function inactiveUser(string $email, string $smtpResponse): self
+    {
+        return new self($email, 'inactive_user', $smtpResponse);
+    }
+
     public function getReason(): string
     {
         return $this->reason;
