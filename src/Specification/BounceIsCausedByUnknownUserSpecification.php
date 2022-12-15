@@ -13,10 +13,18 @@ class BounceIsCausedByUnknownUserSpecification implements BounceCauseSpecificati
         // Orange: 550 5.1.1 g1aPogOQcUQ7x Adresse d au moins un destinataire invalide. Invalid recipient. OFR_416 [416]
         'Recipient address rejected: User unknown',
         'Adresse d au moins un destinataire invalide. Invalid recipient. OFR_416 [416]',
+        // Laposte
+        'Adresse destinataire invalide. Invalid recipient',
         // SFR:
         'Sender user unknown',
         // Yahoo: 1 Requested mail action aborted, mailbox not found
         'Requested mail action aborted, mailbox not found',
+        '5.1.1 User Unknown',
+        'Address unknown',
+        '5.1.1 user unknown (UserSearch)',
+        'User unknown',
+        '5.5.4 Invalid Address',
+        'Recipient address rejected: Invalid-Recipient.',
     ];
 
     public function isSatisfiedBy(string $message): bool
