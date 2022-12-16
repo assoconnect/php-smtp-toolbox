@@ -25,6 +25,7 @@ class BounceIsCausedByUnknownUserSpecification implements BounceCauseSpecificati
         'User unknown',
         '5.5.4 Invalid Address',
         'Recipient address rejected: Invalid-Recipient.',
+        'Requested action not taken: mailbox unavailable',
     ];
 
     public function isSatisfiedBy(string $message): bool

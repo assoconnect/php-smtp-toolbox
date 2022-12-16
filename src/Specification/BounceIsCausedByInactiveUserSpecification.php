@@ -11,6 +11,7 @@ class BounceIsCausedByInactiveUserSpecification implements BounceCauseSpecificat
         'Recipient address rejected: this mailbox is inactive and has been disabled',
         'recipient address rejected: Inactive',
         'The email account that you tried to reach is over quota and inactive.',
+        'This mailbox is disabled',
     ];
 
     public function isSatisfiedBy(string $message): bool
