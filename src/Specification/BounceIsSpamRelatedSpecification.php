@@ -8,7 +8,8 @@ class BounceIsSpamRelatedSpecification implements BounceCauseSpecificationInterf
 {
     private const NEEDLES = [
         'spam detected',
-        'rejected per SPAM policy'
+        'rejected per SPAM policy',
+        'Not delivering to a user who marked your messages as spam'
     ];
 
     public function isSatisfiedBy(string $message): bool
