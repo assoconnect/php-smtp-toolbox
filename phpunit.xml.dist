@@ -2,6 +2,10 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./vendor/autoload.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
   <php>
     <server name="SYMFONY_PHPUNIT_VERSION" value="9"/>
+    <ini name="error_reporting" value="-1" />
+    <env name="KERNEL_CLASS" value="AssoConnect\SmtpToolbox\Tests\TestKernel" />
+    <env name="APP_ENV" value="test" />
+    <env name="APP_DEBUG" value="1" />
   </php>
   <coverage processUncoveredFiles="true">
     <include>
