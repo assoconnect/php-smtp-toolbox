@@ -2,7 +2,7 @@ bounce:
   reason:
     inactive: "La boîte email du destinataire a été désactivée."
     quota: "La boîte email du destinataire est pleine et ne peut plus recevoir d'emails."
-    none: "Le serveur du destinataire n'a communiqué aucune raison expliquant l'échec de l'envoi."
+    none: "Nous n’avons pas réussi à interpréter la raison de l’échec d’envoi communiquée par le serveur mail."
     other: ""
     spam: "Le serveur du destinataire a identifié votre email comme un spam et refuse de le recevoir."
     unknown_user: "L'adresse email est incorrecte."
