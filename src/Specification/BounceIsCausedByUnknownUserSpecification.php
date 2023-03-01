@@ -26,6 +26,8 @@ class BounceIsCausedByUnknownUserSpecification implements BounceCauseSpecificati
         '5.5.4 Invalid Address',
         'Recipient address rejected: Invalid-Recipient.',
         'Requested action not taken: mailbox unavailable',
+        // Postmark default hardBounce message
+        'The server was unable to deliver your message (ex: unknown user, mailbox not found).',
     ];
 
     public function isSatisfiedBy(string $message): bool
