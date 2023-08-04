@@ -20,8 +20,10 @@ class BounceIsCausedByOverQuotaSpecificationTest extends TestCase
     public function provideMessages(): iterable
     {
         yield ['Email rejected per SPAM policy', false];
-        yield [<<<MESSAGE
+        yield [
+        <<<MESSAGE
 554 5.2.2 <xxx@free.fr>: Recipient address rejected: Quota exceeded (mailbox for user is full)
-MESSAGE, true];
+MESSAGE, true,
+        ];
     }
 }

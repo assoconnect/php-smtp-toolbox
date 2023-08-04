@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\Exception;
 
-use JetBrains\PhpStorm\Internal\LanguageLevelTypeAware;
 use PHPMailer\PHPMailer\SMTP;
 
 class SmtpConnectionRuntimeException extends \RuntimeException

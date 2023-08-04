@@ -40,7 +40,7 @@ class BounceReasonTranslatable implements TranslatableInterface
             BounceIsCausedByOverQuotaSpecification::class => ['quota', 'contact'],
             BounceIsCausedByUnknownUserSpecification::class => ['unknown_user', 'review'],
             BounceIsSpamRelatedSpecification::class => ['spam', 'none'],
-            BounceReasonIsUnknownSpecification::class => ['unknown', 'none']
+            BounceReasonIsUnknownSpecification::class => ['unknown', 'none'],
         ];
 
         foreach ($map as $specificationClass => $translationKeys) {

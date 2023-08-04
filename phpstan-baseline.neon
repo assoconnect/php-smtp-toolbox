@@ -1,0 +1,11 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Cannot call method trans\\(\\) on object\\|null\\.$#"
+			count: 1
+			path: tests/Translatable/BounceReasonTranslatableTest.php
+
+		-
+			message: "#^Parameter \\#1 \\$translator of method AssoConnect\\\\SmtpToolbox\\\\Translatable\\\\BounceReasonTranslatable\\:\\:trans\\(\\) expects Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface, object\\|null given\\.$#"
+			count: 1
+			path: tests/Translatable/BounceReasonTranslatableTest.php

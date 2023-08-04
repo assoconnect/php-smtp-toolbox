@@ -44,9 +44,9 @@ class MxServersResolverTest extends TestCase
                 [
                     'type' => 'MX',
                     'host' => 'my.mx.server',
-                    'pri' => 100
-                ]
-            ]
+                    'pri' => 100,
+                ],
+            ],
         ]);
 
         self::assertNull($this->resolver->getMxServers('anydomain.fr'));
