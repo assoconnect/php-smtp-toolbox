@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\Resolver;
 
-use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 class MxServersResolver
 {
     public const CACHE_KEY = 'mx_servers_';
 
-    private AdapterInterface $cache;
+    private CacheItemPoolInterface $cache;
 
-    public function __construct(AdapterInterface $sharedCacheAdapter)
+    public function __construct(CacheItemPoolInterface $sharedCacheAdapter)
     {
         $this->cache = $sharedCacheAdapter;
     }
