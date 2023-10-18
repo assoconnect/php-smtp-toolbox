@@ -20,8 +20,10 @@ class BounceIsCausedByInactiveUserSpecificationTest extends TestCase
     public function provideMessages(): iterable
     {
         yield ['Email rejected per SPAM policy', false];
-        yield [<<<MESSAGE
+        yield [
+        <<<MESSAGE
 450 4.2.1 <xxx@laposte.net>: Recipient address rejected: this mailbox is inactive and has been disabled
-MESSAGE, true];
+MESSAGE, true,
+        ];
     }
 }

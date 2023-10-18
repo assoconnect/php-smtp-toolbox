@@ -17,8 +17,7 @@ class BounceReasonTranslatableTest extends KernelTestCase
     {
         self::bootKernel();
 
-        /** @var TranslatorInterface $translator */
-        $translator = self::getContainer()->get(TranslatorInterface::class);
+        $translator = static::getContainer()->get(TranslatorInterface::class);
 
         self::assertSame(
             $translator->trans($expectedTranslationKey, [], 'assoconnect_smtp_toolbox'),
@@ -33,17 +32,17 @@ class BounceReasonTranslatableTest extends KernelTestCase
     {
         yield 'code' => [
             '2.2.1 test code',
-            'bounce.reason.none'
+            'bounce.reason.none',
         ];
 
         yield 'text' => [
             'Not delivering to a user who marked your messages as spam',
-            'bounce.reason.spam'
+            'bounce.reason.spam',
         ];
 
         yield 'unknown' => [
             'value does not exists',
-            'bounce.reason.none'
+            'bounce.reason.none',
         ];
     }
 }

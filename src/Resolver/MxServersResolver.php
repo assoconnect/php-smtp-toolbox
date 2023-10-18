@@ -12,9 +12,9 @@ class MxServersResolver
 
     private CacheItemPoolInterface $cache;
 
-    public function __construct(CacheItemPoolInterface $sharedCacheAdapter)
+    public function __construct(CacheItemPoolInterface $cache)
     {
-        $this->cache = $sharedCacheAdapter;
+        $this->cache = $cache;
     }
 
     /**

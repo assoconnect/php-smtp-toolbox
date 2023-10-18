@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AssoConnect\SmtpToolbox\Tests\Validation;
 
 use AssoConnect\SmtpToolbox\Dto\InvalidAddressDto;
