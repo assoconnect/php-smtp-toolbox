@@ -16,6 +16,16 @@ trait EmailIsFromDataTrait
             ],
             'mxRegex' => null,
         ],
+        'apple' => [
+            'country' => 'US',
+            'domains' => [
+                'icloud.com',
+                'mac.com',
+                'me.com',
+            ],
+            'mxServers' => [],
+            'mxRegex' => null,
+        ],
         'bouygues' => [
             'country' => 'FR',
             'domains' => ['bbox.fr'],
