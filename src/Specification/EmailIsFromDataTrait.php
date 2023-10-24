@@ -132,6 +132,12 @@ trait EmailIsFromDataTrait
             'domains' => [
                 'yahoo.com',
                 'yahoo.fr',
+                'yahoo.de',
+                'yahoo.it',
+                'yahoo.gr',
+                'yahoo.co.uk',
+                'yahoo.be',
+                'yahoo.es'
             ],
             'mxServers' => [],
             'mxRegex' => null,
