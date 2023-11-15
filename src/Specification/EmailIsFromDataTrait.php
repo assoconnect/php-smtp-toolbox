@@ -4,9 +4,18 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\Specification;
 
+/**
+ * @phpstan-type DomainData array{
+ *   country: string,
+ *   domains: string[],
+ *   domainsWithoutTLD?: string[],
+ *   mxServers?: string[],
+ *   mxRegex?: string
+ * }
+ */
 trait EmailIsFromDataTrait
 {
-    /** @var array<string, array{country: string, domains: string[], mxServers: string[], mxRegex: ?string}> */
+    /** @var array<string, DomainData> */
     protected static array $data = [
         '1&1' => [
             'country' => 'FR',
@@ -14,7 +23,6 @@ trait EmailIsFromDataTrait
             'mxServers' => [
                 'mx00.ionos.fr',
             ],
-            'mxRegex' => null,
         ],
         'apple' => [
             'country' => 'US',
@@ -23,14 +31,10 @@ trait EmailIsFromDataTrait
                 'mac.com',
                 'me.com',
             ],
-            'mxServers' => [],
-            'mxRegex' => null,
         ],
         'bouygues' => [
             'country' => 'FR',
             'domains' => ['bbox.fr'],
-            'mxServers' => [],
-            'mxRegex' => null,
         ],
         'free' => [
             'country' => 'FR',
@@ -42,7 +46,6 @@ trait EmailIsFromDataTrait
                 'mx1.free.fr',
                 'mx2.free.fr',
             ],
-            'mxRegex' => null,
         ],
         'google' => [
             'country' => 'US',
@@ -54,30 +57,25 @@ trait EmailIsFromDataTrait
                 'aspmx2.googlemail.com',
                 'aspmx3.googlemail.com',
             ],
-            'mxRegex' => null,
         ],
         'infomaniak' => [
             'country' => 'FR',
             'domains' => [],
             'mxServers' => ['mta-gw.infomaniak.ch'],
-            'mxRegex' => null,
         ],
         'laposte' => [
             'country' => 'FR',
             'domains' => ['laposte.net'],
-            'mxServers' => [],
-            'mxRegex' => null,
         ],
         'microsoft' => [
             'country' => 'US',
             'domains' => [
-                'hotmail.fr',
-                'hotmail.com',
                 'live.fr',
-                'outlook.com',
-                'outlook.fr',
             ],
-            'mxServers' => [],
+            'domainsWithoutTLD' => [
+                'hotmail',
+                'outlook',
+            ],
             'mxRegex' => '/.*\.mail\.protection\.outlook\.com/',
         ],
         'orange' => [
@@ -90,7 +88,6 @@ trait EmailIsFromDataTrait
                 'smtp-in.orange.fr',
                 'mx.mailbox.orange-business.com',
             ],
-            'mxRegex' => null,
         ],
         'ovh' => [
             'country' => 'FR',
@@ -105,7 +102,6 @@ trait EmailIsFromDataTrait
                 'mx2.mail.ovh.net',
                 'mx3.mail.ovh.net',
             ],
-            'mxRegex' => null,
         ],
         'sfr' => [
             'country' => 'FR',
@@ -124,23 +120,15 @@ trait EmailIsFromDataTrait
                 'numericable-caraibes.fr',
                 'sfr.fr',
             ],
-            'mxServers' => [],
-            'mxRegex' => null,
         ],
         'yahoo' => [
             'country' => 'US',
             'domains' => [
-                'yahoo.com',
-                'yahoo.fr',
-                'yahoo.de',
-                'yahoo.it',
-                'yahoo.gr',
                 'yahoo.co.uk',
-                'yahoo.be',
-                'yahoo.es'
             ],
-            'mxServers' => [],
-            'mxRegex' => null,
+            'domainsWithoutTLD' => [
+                'yahoo',
+            ],
         ],
     ];
 }
