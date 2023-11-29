@@ -39,7 +39,8 @@
     "php": "^8.0",
     "symfony/cache": "^5.4|^6.0",
     "symfony/contracts": "^2.5",
-    "phpmailer/phpmailer": "^6.6"
+    "phpmailer/phpmailer": "^6.6",
+    "thecodingmachine/safe": "^2.5"
   },
   "config": {
     "allow-plugins": {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\Resolver;
 
+use function Safe\preg_match;
+
 class BounceTypeResolver
 {
     public const BOUNCE_REASON_UNQUALIFIED = 'BOUNCE_REASON_UNQUALIFIED';
@@ -164,7 +166,7 @@ class BounceTypeResolver
     public function resolve(string $bounceReason): string
     {
         foreach (self::BOUNCE_REASONS_MAPPING as $pattern => $type) {
-            if (preg_match($pattern, $bounceReason)) {
+            if (1 === preg_match($pattern, $bounceReason)) {
                 return $type;
             }
         }
