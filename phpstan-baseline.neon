@@ -1,6 +1,16 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Only booleans are allowed in an if condition, int\\|false given\\.$#"
+			count: 1
+			path: src/Resolver/BounceTypeResolver.php
+
+		-
+			message: "#^The string contains an insecure link$#"
+			count: 1
+			path: src/Resolver/BounceTypeResolver.php
+
+		-
 			message: "#^Cannot call method trans\\(\\) on object\\|null\\.$#"
 			count: 1
 			path: tests/Translatable/BounceReasonTranslatableTest.php

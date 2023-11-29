@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace AssoConnect\SmtpToolbox\Resolver;
 
 class BounceTypeResolver
@@ -14,6 +16,7 @@ class BounceTypeResolver
     public const BOUNCE_REASON_USER_ACTION_REQUIRED = 'BOUNCE_REASON_USER_ACTION_REQUIRED';
     public const BOUNCE_REASON_INVALID = 'BOUNCE_REASON_INVALID';
     public const BOUNCE_REASON_TEMPORARY = 'BOUNCE_REASON_TEMPORARY';
+    // phpcs:disable
     public const BOUNCE_REASONS_MAPPING = [
         //DMarc failures
         '/Email rejected per DMARC policy/' => self::BOUNCE_REASON_DMARC_FAILURE,
@@ -155,6 +158,8 @@ class BounceTypeResolver
         '/Subject contains invalid characters/' => self::BOUNCE_REASON_UNKNOWN,
         '/message header size exceeds limit/' => self::BOUNCE_REASON_UNKNOWN,
     ];
+
+    //phpcs:enable
 
     public function resolve(string $bounceReason): string
     {
