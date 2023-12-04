@@ -58,7 +58,7 @@ class BounceTypeResolver
         '/Sender denied as sender\'s email address is on SenderFilterConfig list/' => self::BOUNCE_REASON_DENIED,
         '/Access denied/' => self::BOUNCE_REASON_DENIED,
         // Greylisting
-        '/Recipient address rejected: Greylisted, see http:\/\/postgrey\.schweikert\.ch/' => self::BOUNCE_REASON_DENIED,
+        '/Recipient address rejected: Greylisted, see http:\/\/postgrey\.schweikert\.ch/' => self::BOUNCE_REASON_GREYLISTING,
         '/Greylisting in (effect|action), please come back later/' => self::BOUNCE_REASON_GREYLISTING,
         '/Greylisted for .*/' => self::BOUNCE_REASON_GREYLISTING,
         '/(You email|message) has been greylisted/' => self::BOUNCE_REASON_GREYLISTING,
@@ -76,7 +76,6 @@ class BounceTypeResolver
         '/(MX|Recipient address) lookup failed/' => self::BOUNCE_REASON_INVALID,
         '/email account that you tried to reach (does not exist|is over quota and inactive|is inactive)/' => self::BOUNCE_REASON_INVALID,
         '/User unknown in local recipient table/' => self::BOUNCE_REASON_INVALID,
-        '/unable to connect to MX servers/' => self::BOUNCE_REASON_INVALID,
         '/new mail is not currently being accepted for this mailbox/' => self::BOUNCE_REASON_INVALID,
         '/Addressee unknown/' => self::BOUNCE_REASON_INVALID,
         '/verify that you have the correct email address for your recipient/' => self::BOUNCE_REASON_INVALID,
