@@ -1,45 +1,50 @@
 {
-    "name": "assoconnect/php-smtp-toolbox",
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/assoconnect/php-smtp-toolbox/"
-        }
-    ],
-    "type": "library",
-    "description": "",
-    "keywords": ["php", "smtp", "email"],
-    "homepage": "https://github.com/assoconnect/php-smtp-toolbox/",
-    "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "AssoConnect\\SmtpToolbox\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "AssoConnect\\SmtpToolbox\\Tests\\": "tests/"
-        }
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^9.2",
-        "symfony/phpunit-bridge": "^6.1",
-        "symfony/var-dumper": "^5.4|^6.0",
-        "symfony/framework-bundle": "^5.4",
-        "symfony/yaml": "^5.4",
-        "symfony/translation": "^5.4",
-        "assoconnect/php-quality-config": "^1.2",
-        "phpstan/phpstan-symfony": "^1.3"
-    },
-    "require": {
-        "php": "^8.0",
-        "symfony/cache": "^5.4|^6.0",
-        "symfony/contracts": "^2.5",
-        "phpmailer/phpmailer": "^6.6"
-    },
-    "config": {
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
-        }
+  "name": "assoconnect/php-smtp-toolbox",
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/assoconnect/php-smtp-toolbox/"
     }
+  ],
+  "type": "library",
+  "description": "",
+  "keywords": [
+    "php",
+    "smtp",
+    "email"
+  ],
+  "homepage": "https://github.com/assoconnect/php-smtp-toolbox/",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "AssoConnect\\SmtpToolbox\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "AssoConnect\\SmtpToolbox\\Tests\\": "tests/"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.2",
+    "symfony/phpunit-bridge": "^6.1",
+    "symfony/var-dumper": "^5.4|^6.4",
+    "symfony/framework-bundle": "^5.4|^6.4",
+    "symfony/yaml": "^5.4|^6.4",
+    "symfony/translation": "^5.4|^6.4",
+    "assoconnect/php-quality-config": "^1.2",
+    "phpstan/phpstan-symfony": "^1.3"
+  },
+  "require": {
+    "php": "^8.0",
+    "symfony/cache": "^5.4|^6.0",
+    "symfony/contracts": "^2.5",
+    "phpmailer/phpmailer": "^6.6",
+    "thecodingmachine/safe": "^2.5"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  }
 }
