@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\Specification;
 
-/** @phpstan-import-type DomainData from EmailIsFromDataTrait */
 class EmailAddressIsFromACountrySpecification
 {
     use EmailIsFromDataTrait;
@@ -21,20 +20,12 @@ class EmailAddressIsFromACountrySpecification
         }
 
         // First pass without DNS check
-        /**
-         * @var string $providerName
-         * @var  DomainData $provider
-         */
         foreach (self::$data as $providerName => $provider) {
             if ($this->providerSpecification->isSatisfiedBy($candidate, $providerName, false)) {
                 return $country === $provider['country'];
             }
         }
 
-        /**
-         * @var string $providerName
-         * @var DomainData $provider
-         */
         // Second pass with DNS check
         foreach (self::$data as $providerName => $provider) {
             if ($this->providerSpecification->isSatisfiedBy($candidate, $providerName, true)) {
