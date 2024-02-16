@@ -4,22 +4,18 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\Specification;
 
+use AssoConnect\SmtpToolbox\Resolver\BounceTypeResolver;
+
 class BounceIsSpamRelatedSpecification implements BounceCauseSpecificationInterface
 {
-    private const NEEDLES = [
-        'spam detected',
-        'rejected per SPAM policy',
-        'Not delivering to a user who marked your messages as spam',
-    ];
+    private function __construct(private readonly BounceTypeResolver $bounceTypeResolver)
+    {
+    }
 
     public function isSatisfiedBy(string $message): bool
     {
-        foreach (self::NEEDLES as $needle) {
-            if (false !== strpos($message, $needle)) {
-                return true;
-            }
-        }
+        $bounceType = $this->bounceTypeResolver->resolve($message);
 
-        return false;
+        return BounceTypeResolver::BOUNCE_REASON_SPAMMY === $bounceType;
     }
 }

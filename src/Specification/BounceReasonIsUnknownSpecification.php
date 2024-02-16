@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\Specification;
 
+/** @deprecated see BounceTypeResolver */
 class BounceReasonIsUnknownSpecification implements BounceCauseSpecificationInterface
 {
     private const NEEDLES = [
@@ -14,7 +15,7 @@ class BounceReasonIsUnknownSpecification implements BounceCauseSpecificationInte
     public function isSatisfiedBy(string $message): bool
     {
         foreach (self::NEEDLES as $needle) {
-            if (false !== strpos($message, $needle)) {
+            if (str_contains($message, $needle)) {
                 return true;
             }
         }

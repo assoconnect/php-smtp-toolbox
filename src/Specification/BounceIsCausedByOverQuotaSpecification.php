@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\Specification;
 
+/** @deprecated see BounceTypeResolver */
 class BounceIsCausedByOverQuotaSpecification implements BounceCauseSpecificationInterface
 {
     private const NEEDLES = [
@@ -22,7 +23,7 @@ class BounceIsCausedByOverQuotaSpecification implements BounceCauseSpecification
     public function isSatisfiedBy(string $message): bool
     {
         foreach (self::NEEDLES as $needle) {
-            if (false !== strpos($message, $needle)) {
+            if (str_contains($message, $needle)) {
                 return true;
             }
         }
