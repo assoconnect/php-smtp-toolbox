@@ -8,7 +8,7 @@ class EmailAddressIsFromACountrySpecification
 {
     use EmailIsFromDataTrait;
 
-    public function __construct(private EmailAddressIsFromAProviderSpecification $providerSpecification)
+    public function __construct(private readonly EmailAddressIsFromAProviderSpecification $providerSpecification)
     {
     }
 
