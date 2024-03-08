@@ -10,6 +10,7 @@ use AssoConnect\SmtpToolbox\Dto\ValidAddressDto;
 use AssoConnect\SmtpToolbox\Dto\ValidationStatusDtoInterface;
 use AssoConnect\SmtpToolbox\Exception\SmtpConnectionRuntimeException;
 use AssoConnect\SmtpToolbox\Exception\SmtpTemporaryFailureException;
+use AssoConnect\SmtpToolbox\Resolver\BounceTypeResolver;
 use AssoConnect\SmtpToolbox\Specification\BounceIsCausedByInactiveUserSpecification;
 use AssoConnect\SmtpToolbox\Specification\BounceIsCausedByUnknownUserSpecification;
 use AssoConnect\SmtpToolbox\Specification\ExceptionComesFromTemporaryFailureSpecification;
@@ -22,24 +23,15 @@ class GenericProviderClient
      * Host domain to use to connect to the MX servers
      * Warning: some MX servers require the domain to point to an IP with a valid reverse DNS record
      */
-    private string $host;
-    private ExceptionComesFromTemporaryFailureSpecification $exceptionComesFromTemporaryFailureSpecification;
-    private LoggerInterface $logger;
-    private BounceIsCausedByUnknownUserSpecification $bounceIsCausedByUnknownUserSpecification;
-    private BounceIsCausedByInactiveUserSpecification $bounceIsCausedByInactiveUserSpecification;
 
     public function __construct(
-        LoggerInterface $logger,
-        ExceptionComesFromTemporaryFailureSpecification $exceptionComesFromTemporaryFailureSpecification,
-        BounceIsCausedByUnknownUserSpecification $bounceIsCausedByUnknownUserSpecification,
-        BounceIsCausedByInactiveUserSpecification $bounceIsCausedByInactiveUserSpecification,
-        string $host
+        private readonly LoggerInterface $logger,
+        private readonly ExceptionComesFromTemporaryFailureSpecification $comesFromTemporaryFailureSpecification,
+        private readonly BounceIsCausedByUnknownUserSpecification $bounceIsCausedByUnknownUserSpecification,
+        private readonly BounceIsCausedByInactiveUserSpecification $bounceIsCausedByInactiveUserSpecification,
+        private readonly BounceTypeResolver $bounceTypeResolver,
+        private readonly string $host
     ) {
-        $this->logger = $logger;
-        $this->exceptionComesFromTemporaryFailureSpecification = $exceptionComesFromTemporaryFailureSpecification;
-        $this->bounceIsCausedByUnknownUserSpecification = $bounceIsCausedByUnknownUserSpecification;
-        $this->bounceIsCausedByInactiveUserSpecification = $bounceIsCausedByInactiveUserSpecification;
-        $this->host = $host;
     }
 
     /**
@@ -121,7 +113,31 @@ class GenericProviderClient
             if (552 === $exception->getCode()) {
                 return new ValidAddressDto($email);
             }
-            if ($this->exceptionComesFromTemporaryFailureSpecification->isSatisfiedBy($exception)) {
+            if (
+                in_array(
+                    $this->bounceTypeResolver->resolve($exception->getLastReply()),
+                    [BounceTypeResolver::BOUNCE_REASON_INVALID, BounceTypeResolver::BOUNCE_REASON_DENIED],
+                    true
+                )
+            ) {
+                return InvalidAddressDto::unknownUser($email, $exception->getLastReply());
+            }
+            if (
+                BounceTypeResolver::BOUNCE_REASON_USER_ACTION_REQUIRED === $this->bounceTypeResolver
+                    ->resolve($exception->getLastReply())
+            ) {
+                return InvalidAddressDto::inactiveUser($email, $exception->getLastReply());
+            }
+            if (
+                in_array(
+                    $this->bounceTypeResolver->resolve($exception->getLastReply()),
+                    [BounceTypeResolver::BOUNCE_REASON_SPAMMY, BounceTypeResolver::BOUNCE_REASON_BLACKLISTED],
+                    true
+                )
+            ) {
+                return new UnverifiedAddressDto($email);
+            }
+            if ($this->comesFromTemporaryFailureSpecification->isSatisfiedBy($exception)) {
                 throw new SmtpTemporaryFailureException($exception->getMessage(), $exception->getCode(), $exception);
             }
 

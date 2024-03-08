@@ -59,6 +59,7 @@ class BounceTypeResolver
         '/Reputation too low/' => self::BOUNCE_REASON_SPAMMY,
         '/rejected for policy reasons/' => self::BOUNCE_REASON_SPAMMY,
         '/returned message detected as spam/' => self::BOUNCE_REASON_SPAMMY,
+        '/Not delivering to a user who marked your messages as spam/' => self::BOUNCE_REASON_SPAMMY,
         // Email denied
         '/5\.7\.1 <.*>: Recipient address rejected: Access denied/' => self::BOUNCE_REASON_DENIED,
         '/5\.7\.1 <.*>: Relay access denied/' => self::BOUNCE_REASON_DENIED,

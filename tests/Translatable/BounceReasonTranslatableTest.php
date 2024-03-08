@@ -15,8 +15,6 @@ class BounceReasonTranslatableTest extends KernelTestCase
      */
     public function testBounceReasonTranslatable(string $reason, string $expectedTranslationKey): void
     {
-        self::bootKernel();
-
         $translator = static::getContainer()->get(TranslatorInterface::class);
 
         self::assertSame(

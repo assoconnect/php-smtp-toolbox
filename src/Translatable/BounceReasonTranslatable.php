@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\Translatable;
 
+use AssoConnect\SmtpToolbox\Resolver\BounceTypeResolver;
 use AssoConnect\SmtpToolbox\Specification\BounceCauseSpecificationInterface;
 use AssoConnect\SmtpToolbox\Specification\BounceIsCausedByInactiveUserSpecification;
 use AssoConnect\SmtpToolbox\Specification\BounceIsCausedByOverQuotaSpecification;
@@ -44,7 +45,11 @@ class BounceReasonTranslatable implements TranslatableInterface
         ];
 
         foreach ($map as $specificationClass => $translationKeys) {
-            $specification = new $specificationClass();
+            if (BounceIsSpamRelatedSpecification::class === $specificationClass) {
+                $specification = new $specificationClass(new BounceTypeResolver());
+            } else {
+                $specification = new $specificationClass();
+            }
             if ($specification->isSatisfiedBy($reason)) {
                 return $translationKeys;
             }
