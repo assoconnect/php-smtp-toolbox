@@ -8,7 +8,7 @@ use AssoConnect\SmtpToolbox\Resolver\BounceTypeResolver;
 
 class BounceIsSpamRelatedSpecification implements BounceCauseSpecificationInterface
 {
-    private function __construct(private readonly BounceTypeResolver $bounceTypeResolver)
+    public function __construct(private readonly BounceTypeResolver $bounceTypeResolver)
     {
     }
 
