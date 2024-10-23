@@ -30,6 +30,7 @@ class BounceTypeResolver
         '/Your access to this mail system has been rejected due to poor reputation of a domain used in message transfer/' => self::BOUNCE_REASON_BLACKLISTED,
         '/Your email was rejected due to having a domain present in the Spamhaus DBL/' => self::BOUNCE_REASON_BLACKLISTED,
         '/MailFrom domain is listed in Spamhaus/' => self::BOUNCE_REASON_BLACKLISTED,
+        '/blocked using zen.spamhaus.org/' => self::BOUNCE_REASON_BLACKLISTED,
         '/LPN007_510/' => self::BOUNCE_REASON_BLACKLISTED,
         '/OFR_506/' => self::BOUNCE_REASON_BLACKLISTED,
         '/SFR_IN_103/' => self::BOUNCE_REASON_BLACKLISTED,
