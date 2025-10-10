@@ -33,7 +33,8 @@
     "symfony/yaml": "^5.4|^6.4",
     "symfony/translation": "^5.4|^6.4",
     "assoconnect/php-quality-config": "^1.10",
-    "phpstan/phpstan-symfony": "^1.3.7"
+    "phpstan/phpstan-symfony": "^1.3.7",
+    "rector/rector": "^1.2"
   },
   "require": {
     "php": "^8.2",
