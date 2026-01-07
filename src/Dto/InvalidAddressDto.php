@@ -13,7 +13,7 @@ class InvalidAddressDto implements ValidationStatusDtoInterface
     private string $reason;
     private ?string $smtpResponse;
 
-    private function __construct(string $email, string $reason, string $smtpResponse = null)
+    private function __construct(string $email, string $reason, ?string $smtpResponse = null)
     {
         $this->email = $email;
         $this->reason = $reason;
