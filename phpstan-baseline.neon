@@ -1,16 +1,25 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^The string contains an insecure link$#"
+			message: '#^The string contains an insecure link$#'
+			identifier: assoconnect.insecureLink
 			count: 1
 			path: src/Resolver/BounceTypeResolver.php
 
 		-
-			message: "#^Cannot call method trans\\(\\) on object\\|null\\.$#"
+			message: '#^Call to function array_filter\(\) requires parameter \#2 to be passed to avoid loose comparison semantics\.$#'
+			identifier: arrayFilter.strict
+			count: 1
+			path: src/Translatable/BounceReasonTranslatable.php
+
+		-
+			message: '#^Call to an undefined method object\:\:trans\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: tests/Translatable/BounceReasonTranslatableTest.php
 
 		-
-			message: "#^Parameter \\#1 \\$translator of method AssoConnect\\\\SmtpToolbox\\\\Translatable\\\\BounceReasonTranslatable\\:\\:trans\\(\\) expects Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface, object\\|null given\\.$#"
+			message: '#^Parameter \#1 \$translator of method AssoConnect\\SmtpToolbox\\Translatable\\BounceReasonTranslatable\:\:trans\(\) expects Symfony\\Contracts\\Translation\\TranslatorInterface, object given\.$#'
+			identifier: argument.type
 			count: 1
 			path: tests/Translatable/BounceReasonTranslatableTest.php
