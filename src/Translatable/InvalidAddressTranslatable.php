@@ -22,7 +22,7 @@ class InvalidAddressTranslatable implements TranslatableInterface
         $this->smtpResponse = $smtpResponse;
     }
 
-    public function trans(TranslatorInterface $translator, string $locale = null): string
+    public function trans(TranslatorInterface $translator, ?string $locale = null): string
     {
         return $translator->trans(
             'invalid_address.' . $this->reason,

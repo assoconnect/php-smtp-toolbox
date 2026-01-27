@@ -24,7 +24,7 @@ class BounceReasonTranslatable implements TranslatableInterface
         $this->translationKeys = $this->getTranslationKey($reason);
     }
 
-    public function trans(TranslatorInterface $translator, string $locale = null): string
+    public function trans(TranslatorInterface $translator, ?string $locale = null): string
     {
         return implode('', array_filter([
             $translator->trans('bounce.reason.' . $this->translationKeys[0], [], 'assoconnect_smtp_toolbox'),
