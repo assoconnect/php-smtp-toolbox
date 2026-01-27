@@ -12,7 +12,7 @@ class TestKernel extends Kernel
 {
     public function registerBundles(): iterable
     {
-        return [new FrameworkBundle()];
+        yield new FrameworkBundle();
     }
 
     public function registerContainerConfiguration(LoaderInterface $loader): void
