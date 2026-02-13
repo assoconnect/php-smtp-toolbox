@@ -49,7 +49,7 @@ class SmtpValidatorTest extends TestCase
     }
 
     /** @return array{0: string, 1: class-string<ValidationStatusDtoInterface>}[] */
-    public function provideEmailAddresses(): iterable
+    public static function provideEmailAddresses(): iterable
     {
         yield ['this_user_does_not_exist', InvalidAddressDto::class];
         yield ['this_user_does_not_exist@this_domain_does_not_exist', InvalidAddressDto::class];

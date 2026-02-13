@@ -17,7 +17,7 @@ class BounceReasonIsUnknownSpecificationTest extends TestCase
     }
 
     /** @return array{string, bool}[] */
-    public function provideMessages(): iterable
+    public static function provideMessages(): iterable
     {
         yield ['hard bounce', true];
         yield ['Sender address rejected: Sender user unknown.  Adresse expediteur inconnue', false];

@@ -17,7 +17,7 @@ class BounceIsCausedByOverQuotaSpecificationTest extends TestCase
     }
 
     /** @return array{string, bool}[] */
-    public function provideMessages(): iterable
+    public static function provideMessages(): iterable
     {
         yield ['Email rejected per SPAM policy', false];
         yield [
