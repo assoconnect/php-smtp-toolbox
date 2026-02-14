@@ -19,7 +19,7 @@ class EmailAddressIsFromAProviderSpecificationTest extends TestCase
         self::assertSame($isSatisfiedBy, $spec->isSatisfiedBy($emailAddress, $providerName, true));
     }
 
-    public function provideEmailAddresses(): iterable
+    public static function provideEmailAddresses(): iterable
     {
         yield ['invalid email', '', false];
         yield ['unknow provider', 'provider that does not exist', false];

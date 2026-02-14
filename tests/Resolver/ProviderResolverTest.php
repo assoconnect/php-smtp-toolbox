@@ -22,7 +22,7 @@ class ProviderResolverTest extends TestCase
         self::assertSame($provider, $resolver->resolve($address));
     }
 
-    public function provideAddressesAndProviders(): iterable
+    public static function provideAddressesAndProviders(): iterable
     {
         // Without DNS check
         yield ['john@hotmail.com', 'microsoft'];

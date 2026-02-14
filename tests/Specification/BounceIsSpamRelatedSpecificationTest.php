@@ -18,7 +18,7 @@ class BounceIsSpamRelatedSpecificationTest extends TestCase
     }
 
     /** @return array{string, bool}[] */
-    public function provideMessages(): iterable
+    public static function provideMessages(): iterable
     {
         yield ['Email rejected per SPAM policy', true];
         yield ['Sender address rejected: Sender user unknown.  Adresse expediteur inconnue', false];

@@ -17,7 +17,7 @@ class BounceTypeResolverTest extends TestCase
         self::assertEquals($expected, $resolver->resolve($bounceReason));
     }
 
-    public function provideBounceReasons(): iterable
+    public static function provideBounceReasons(): iterable
     {
         yield 'DMarc failure' => [BounceTypeResolver::BOUNCE_REASON_DMARC_FAILURE, 'Email rejected per DMARC policy'];
         yield 'Blacklisted' => [BounceTypeResolver::BOUNCE_REASON_BLACKLISTED, 'LPN007_510'];

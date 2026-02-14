@@ -22,7 +22,7 @@ class EmailAddressIsFromACountrySpecificationTest extends TestCase
         self::assertSame($isSatisfiedBy, $spec->isSatisfiedBy($emailAddress, $country));
     }
 
-    public function provideEmailAddresses(): iterable
+    public static function provideEmailAddresses(): iterable
     {
         // Invalid
         yield ['hello', 'FR', false];

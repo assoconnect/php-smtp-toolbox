@@ -26,7 +26,7 @@ class BounceReasonTranslatableTest extends KernelTestCase
     /**
      * @return iterable<mixed>
      */
-    public function providerTrans(): iterable
+    public static function providerTrans(): iterable
     {
         yield 'code' => [
             '2.2.1 test code',
