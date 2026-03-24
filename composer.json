@@ -35,7 +35,7 @@
     "phpstan/phpstan-symfony": "^2"
   },
   "require": {
-    "php": "^8.3",
+    "php": "^8.4",
     "symfony/cache": "^7.0",
     "symfony/contracts": "^2.5|^3.4",
     "phpmailer/phpmailer": "^6.6",
