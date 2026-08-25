@@ -15,6 +15,7 @@ use AssoConnect\SmtpToolbox\Specification\BounceIsCausedByUnknownUserSpecificati
 use AssoConnect\SmtpToolbox\Specification\ExceptionComesFromTemporaryFailureSpecification;
 use AssoConnect\SmtpToolbox\Tests\Resolver\MxServersResolverTestFactory;
 use AssoConnect\SmtpToolbox\Validation\SmtpValidator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -39,10 +40,10 @@ class SmtpValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider provideEmailAddresses
      * @param class-string<ValidationStatusDtoInterface> $expectedDtoClass
      * @throws SmtpTemporaryFailureException
      */
+    #[DataProvider('provideEmailAddresses')]
     public function testClientWorks(string $email, string $expectedDtoClass): void
     {
         self::assertInstanceOf($expectedDtoClass, $this->validator->validate($email));

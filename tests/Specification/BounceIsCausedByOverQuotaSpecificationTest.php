@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace AssoConnect\SmtpToolbox\Tests\Specification;
 
 use AssoConnect\SmtpToolbox\Specification\BounceIsCausedByOverQuotaSpecification;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class BounceIsCausedByOverQuotaSpecificationTest extends TestCase
 {
-    /** @dataProvider provideMessages */
+    #[DataProvider('provideMessages')]
     public function testSpecificationWorks(string $message, bool $isSpam): void
     {
         $spec = new BounceIsCausedByOverQuotaSpecification();

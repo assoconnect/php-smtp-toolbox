@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace AssoConnect\SmtpToolbox\Tests\Translatable;
 
 use AssoConnect\SmtpToolbox\Translatable\BounceReasonTranslatable;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class BounceReasonTranslatableTest extends KernelTestCase
 {
-    /**
-     * @dataProvider providerTrans
-     */
+    #[DataProvider('providerTrans')]
     public function testBounceReasonTranslatable(string $reason, string $expectedTranslationKey): void
     {
         $translator = static::getContainer()->get(TranslatorInterface::class);

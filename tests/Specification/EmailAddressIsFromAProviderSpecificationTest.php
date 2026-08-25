@@ -6,11 +6,12 @@ namespace AssoConnect\SmtpToolbox\Tests\Specification;
 
 use AssoConnect\SmtpToolbox\Specification\EmailAddressIsFromAProviderSpecification;
 use AssoConnect\SmtpToolbox\Tests\Resolver\MxServersResolverTestFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class EmailAddressIsFromAProviderSpecificationTest extends TestCase
 {
-    /** @dataProvider provideEmailAddresses */
+    #[DataProvider('provideEmailAddresses')]
     public function testSpecificationWorks(string $emailAddress, string $providerName, bool $isSatisfiedBy): void
     {
         $spec = new EmailAddressIsFromAProviderSpecification(

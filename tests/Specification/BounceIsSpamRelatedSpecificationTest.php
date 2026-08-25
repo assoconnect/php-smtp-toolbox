@@ -6,11 +6,12 @@ namespace AssoConnect\SmtpToolbox\Tests\Specification;
 
 use AssoConnect\SmtpToolbox\Resolver\BounceTypeResolver;
 use AssoConnect\SmtpToolbox\Specification\BounceIsSpamRelatedSpecification;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class BounceIsSpamRelatedSpecificationTest extends TestCase
 {
-    /** @dataProvider provideMessages */
+    #[DataProvider('provideMessages')]
     public function testSpecificationWorks(string $message, bool $isSpam): void
     {
         $spec = new BounceIsSpamRelatedSpecification(new BounceTypeResolver());

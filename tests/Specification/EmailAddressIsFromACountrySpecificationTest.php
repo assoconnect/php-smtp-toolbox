@@ -7,11 +7,12 @@ namespace AssoConnect\SmtpToolbox\Tests\Specification;
 use AssoConnect\SmtpToolbox\Specification\EmailAddressIsFromACountrySpecification;
 use AssoConnect\SmtpToolbox\Specification\EmailAddressIsFromAProviderSpecification;
 use AssoConnect\SmtpToolbox\Tests\Resolver\MxServersResolverTestFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class EmailAddressIsFromACountrySpecificationTest extends TestCase
 {
-    /** @dataProvider provideEmailAddresses */
+    #[DataProvider('provideEmailAddresses')]
     public function testSpecificationWorks(string $emailAddress, string $country, bool $isSatisfiedBy): void
     {
         $spec = new EmailAddressIsFromACountrySpecification(

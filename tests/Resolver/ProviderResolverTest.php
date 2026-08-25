@@ -6,13 +6,12 @@ namespace AssoConnect\SmtpToolbox\Tests\Resolver;
 
 use AssoConnect\SmtpToolbox\Resolver\ProviderResolver;
 use AssoConnect\SmtpToolbox\Specification\EmailAddressIsFromAProviderSpecification;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ProviderResolverTest extends TestCase
 {
-    /**
-     * @dataProvider provideAddressesAndProviders
-     */
+    #[DataProvider('provideAddressesAndProviders')]
     public function testProviderResolverReturnsTheRightProvider(string $address, ?string $provider): void
     {
         $resolver = new ProviderResolver(
