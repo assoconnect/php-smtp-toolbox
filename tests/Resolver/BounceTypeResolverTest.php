@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace AssoConnect\SmtpToolbox\Tests\Resolver;
 
 use AssoConnect\SmtpToolbox\Resolver\BounceTypeResolver;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class BounceTypeResolverTest extends TestCase
 {
-    /** @dataProvider provideBounceReasons */
+    #[DataProvider('provideBounceReasons')]
     public function testResolveBounceMessagesCorrectly(string $expected, string $bounceReason): void
     {
         $resolver = new BounceTypeResolver();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AssoConnect\SmtpToolbox\Tests\Resolver;
 
 use AssoConnect\SmtpToolbox\Resolver\MxServersResolver;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bridge\PhpUnit\DnsMock;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
@@ -33,10 +34,8 @@ class MxServersResolverTest extends TestCase
         self::assertTrue($isHitAfter);
     }
 
-    /**
-     * @group functional
-     * @group dns-sensitive
-     */
+    #[Group('functional')]
+    #[Group('dns-sensitive')]
     public function testDns(): void
     {
         DnsMock::withMockedHosts([
