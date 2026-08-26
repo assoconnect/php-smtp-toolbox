@@ -1,0 +1,18 @@
+bounce:
+  reason:
+    inactive: "El buzón del destinatario ha sido desactivado."
+    quota: "El buzón del destinatario está lleno y no puede aceptar nuevos correos en este momento"
+    none: "No hemos podido interpretar el motivo del fallo de envío comunicado por el servidor de correo"
+    other: ""
+    spam: "El sistema de correo del destinatario marcó el correo como spam y se niega a entregarlo."
+    unknown_user: "Esta dirección de correo electrónico no existe."
+  tips:
+    contact: "Por favor, informa al destinatario de este problema para que pueda resolverse."
+    none: ""
+    review: "Por favor, comprueba si hay algún error tipográfico en la dirección de correo electrónico."
+invalid_address:
+  no_at_symbol: "A la dirección de correo electrónico {{ email }} le falta el símbolo @"
+  no_mx_servers: "No hay servidores de correo configurados para {{ domain }}"
+  unknown_user: >
+    La dirección de correo electrónico {{ email }} no existe en {{ domain }} :
+    {{ smtpResponse }}
