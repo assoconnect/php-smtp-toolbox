@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace AssoConnect\SmtpToolbox\Tests;
 
+use IntlException;
+use MessageFormatter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
@@ -16,10 +18,10 @@ class TranslationCatalogueTest extends TestCase
 {
     private const string TRANSLATIONS_DIR = __DIR__ . '/../translations';
     private const string DOMAIN = 'assoconnect_smtp_toolbox+intl-icu';
-    private const string REFERENCE_LOCALE = 'en_US';
+    private const string REFERENCE_LOCALE = 'en';
 
     /** Every locale the catalogues are expected to cover. */
-    private const array EXPECTED_LOCALES = ['en_US', 'fr_FR', 'es_ES'];
+    private const array EXPECTED_LOCALES = ['en', 'fr', 'es'];
 
     /** @return iterable<string, array{locale: string}> */
     public static function provideLocales(): iterable
@@ -74,6 +76,44 @@ class TranslationCatalogueTest extends TestCase
         }
     }
 
+    /**
+     * The domain carries the +intl-icu suffix, so every message is an ICU pattern. `{{ name }}` is a
+     * syntax error there, and the translator throws on render rather than at load time.
+     */
+    #[DataProvider('provideLocales')]
+    public function testEveryMessageIsAValidIcuPattern(string $locale): void
+    {
+        $invalid = [];
+
+        foreach ($this->messages($locale) as $key => $message) {
+            if ('' === trim($message)) {
+                continue;
+            }
+
+            try {
+                new MessageFormatter($locale, $message);
+            } catch (IntlException $exception) {
+                $invalid[] = sprintf('%s (%s)', $key, $exception->getMessage());
+            }
+        }
+
+        self::assertSame([], $invalid, sprintf('Invalid ICU pattern(s) in the %s catalogue.', $locale));
+    }
+
+    #[DataProvider('provideLocales')]
+    public function testEveryMessageCarriesTheReferencePlaceholders(string $locale): void
+    {
+        $messages = $this->messages($locale);
+
+        foreach ($this->messages(self::REFERENCE_LOCALE) as $key => $reference) {
+            self::assertSame(
+                self::placeholders($reference),
+                self::placeholders($messages[$key] ?? ''),
+                sprintf('Message "%s" does not carry the same placeholders in %s.', $key, $locale)
+            );
+        }
+    }
+
     private static function cataloguePath(string $locale): string
     {
         return sprintf('%s/%s.%s.yml', self::TRANSLATIONS_DIR, self::DOMAIN, $locale);
@@ -112,5 +152,15 @@ class TranslationCatalogueTest extends TestCase
         }
 
         return $messages;
+    }
+
+    /** @return list<string> */
+    private static function placeholders(string $message): array
+    {
+        preg_match_all('/\{(\w+)\}/', $message, $matches);
+        $placeholders = array_unique($matches[1]);
+        sort($placeholders);
+
+        return $placeholders;
     }
 }

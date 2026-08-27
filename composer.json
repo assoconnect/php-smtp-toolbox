@@ -31,6 +31,7 @@
     "symfony/framework-bundle": "^7.0|^8.0",
     "symfony/yaml": "^7.0|^8.0",
     "symfony/translation": "^7.0|^8.0",
+    "ext-intl": "*",
     "assoconnect/php-quality-config": "^2.2",
     "phpstan/phpstan-symfony": "^2"
   },
