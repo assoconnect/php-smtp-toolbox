@@ -9,8 +9,8 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Nothing fails at runtime when a catalogue is missing or incomplete: the message simply falls back to
- * its English wording, so the gap only shows up in front of an end user.
+ * Every catalogue must cover the reference locale's messages, each in a wording of its own. Neither a
+ * missing catalogue nor an untranslated message fails at runtime, so this test is what guards them.
  */
 class TranslationCatalogueTest extends TestCase
 {
@@ -51,16 +51,25 @@ class TranslationCatalogueTest extends TestCase
         $messages = $this->messages($locale);
 
         foreach ($this->messages(self::REFERENCE_LOCALE) as $key => $reference) {
+            $message = trim($messages[$key] ?? '');
+
             // Some messages are deliberately blank, so emptiness is only a gap where the reference has wording
             if ('' === trim($reference)) {
-                self::assertSame('', trim($messages[$key] ?? ''), sprintf('Message "%s" should stay blank.', $key));
+                self::assertSame('', $message, sprintf('Message "%s" should stay blank.', $key));
                 continue;
             }
 
+            self::assertNotSame('', $message, sprintf('Message "%s" has no %s translation.', $key, $locale));
+
+            if (self::REFERENCE_LOCALE === $locale) {
+                continue;
+            }
+
+            // A catalogue copied from the reference locale and left untranslated clears the emptiness check
             self::assertNotSame(
-                '',
-                trim($messages[$key] ?? ''),
-                sprintf('Message "%s" has no %s translation.', $key, $locale)
+                trim($reference),
+                $message,
+                sprintf('Message "%s" still reads as its %s wording.', $key, self::REFERENCE_LOCALE)
             );
         }
     }
