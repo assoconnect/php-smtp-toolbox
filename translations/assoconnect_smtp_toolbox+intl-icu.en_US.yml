@@ -11,8 +11,8 @@ bounce:
     none: ""
     review: "Please check the email address for typo."
 invalid_address:
-  no_at_symbol: "The email address {{ email }} is missing the @ symbol"
-  no_mx_servers: "No email servers are set up for {{ domain }}"
+  no_at_symbol: "The email address {email} is missing the @ symbol"
+  no_mx_servers: "No email servers are set up for {domain}"
   unknown_user: >
-    The email address {{ email }} doesn't exist at {{ domain }} :
-    {{ smtpResponse }}
+    The email address {email} doesn't exist at {domain}:
+    {smtpResponse}
