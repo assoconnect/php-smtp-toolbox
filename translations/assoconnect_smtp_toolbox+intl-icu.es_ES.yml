@@ -11,8 +11,8 @@ bounce:
     none: ""
     review: "Compruebe si la dirección de correo electrónico contiene alguna errata."
 invalid_address:
-  no_at_symbol: "A la dirección {{ email }} le falta el símbolo @"
-  no_mx_servers: "No hay ningún servidor de correo configurado para {{ domain }}"
+  no_at_symbol: "A la dirección {email} le falta el símbolo @"
+  no_mx_servers: "No hay ningún servidor de correo configurado para {domain}"
   unknown_user: >
-    La dirección {{ email }} no existe en {{ domain }} :
-    {{ smtpResponse }}
+    La dirección {email} no existe en {domain}:
+    {smtpResponse}
