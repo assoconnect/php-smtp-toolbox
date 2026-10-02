@@ -20,6 +20,11 @@ use Psr\Log\LoggerInterface;
 class GenericProviderClient
 {
     /**
+     * Seconds to wait for an MX server to accept the TCP connection
+     */
+    public const int DEFAULT_CONNECT_TIMEOUT = 30;
+
+    /**
      * Host domain to use to connect to the MX servers
      * Warning: some MX servers require the domain to point to an IP with a valid reverse DNS record
      */
@@ -30,7 +35,8 @@ class GenericProviderClient
         private readonly BounceIsCausedByUnknownUserSpecification $bounceIsCausedByUnknownUserSpecification,
         private readonly BounceIsCausedByInactiveUserSpecification $bounceIsCausedByInactiveUserSpecification,
         private readonly BounceTypeResolver $bounceTypeResolver,
-        private readonly string $host
+        private readonly string $host,
+        private readonly int $connectTimeout = self::DEFAULT_CONNECT_TIMEOUT
     ) {
     }
 
@@ -39,11 +45,11 @@ class GenericProviderClient
      */
     public function check(string $email, string $mxServer): ValidationStatusDtoInterface
     {
-        $connection = new SMTP();
+        $connection = $this->createConnection();
         $connection->Debugoutput = $this->logger;
         try {
             // Based on https://github.com/PHPMailer/PHPMailer/blob/master/examples/smtp_check.phps
-            if (!$connection->connect($mxServer)) {
+            if (!$connection->connect($mxServer, null, $this->connectTimeout)) {
                 throw new SmtpConnectionRuntimeException(
                     sprintf('Failed to connect to server: %s', $mxServer),
                     0,
@@ -143,5 +149,10 @@ class GenericProviderClient
 
             throw $exception;
         }
+    }
+
+    protected function createConnection(): SMTP
+    {
+        return new SMTP();
     }
 }
