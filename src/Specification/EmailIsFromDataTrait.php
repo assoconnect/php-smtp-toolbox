@@ -51,6 +51,7 @@ trait EmailIsFromDataTrait
             'country' => 'US',
             'domains' => ['gmail.com'],
             'mxServers' => [
+                'smtp.google.com',
                 'aspmx.l.google.com',
                 'alt1.aspmx.l.google.com',
                 'alt2.aspmx.l.google.com',
